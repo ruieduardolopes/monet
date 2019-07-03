@@ -1,3 +1,6 @@
+#![allow(unused_assignments)]
+#![allow(unused_imports)]
+
 pub mod capture;
 pub mod options;
 pub mod structs;
@@ -5,6 +8,8 @@ pub mod subcommands;
 
 #[macro_use]
 extern crate failure;
+
+use regex::Regex;
 
 fn main() {
     let cliopts = options::get_options_from_cli();
@@ -14,6 +19,7 @@ fn main() {
             "profile" => {
                 let mut ingress = String::new();
                 let mut egress = String::new();
+                let mut filter;
                 match cliopts
                     .subcommand_matches(subcommand_string)
                     .unwrap()
@@ -38,7 +44,15 @@ fn main() {
                         panic!("Value of egress interface was not assigned.");
                     }
                 }
-                match subcommands::profile::init(ingress, egress) {
+                match cliopts.subcommand_matches(subcommand_string).unwrap().value_of("filter") {
+                    Some(filter_string) => {
+                        filter = Regex::new(filter_string).unwrap()
+                    },
+                    None => {
+                        filter = Regex::new(".*").unwrap()
+                    },
+                }
+                match subcommands::profile::init(ingress, egress, filter) {
                     Ok(_) => {}
                     Err(_) => {}
                 }
