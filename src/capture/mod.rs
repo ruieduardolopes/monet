@@ -1,14 +1,13 @@
 extern crate pnet;
 
-pub mod osi;
 pub mod errors;
-pub mod results;
+pub mod osi;
 pub mod packets;
+pub mod results;
 
 use crate::capture::errors::CaptureError;
+use crate::capture::osi::*;
 use crate::capture::results::CaptureResult;
-use crate::fragment::*;
-use crate::frame::*;
 
 use pnet::datalink::Channel::*;
 use pnet::datalink::{channel, interfaces};
