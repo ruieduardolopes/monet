@@ -1,0 +1,6 @@
+# Rust files
+target/*
+Cargo.lock
+
+# IntelliJ files
+.idea/*
