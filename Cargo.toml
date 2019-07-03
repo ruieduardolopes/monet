@@ -1,7 +1,7 @@
 [package]
 name = "monet"
 version = "0.1.0"
-authors = ["Rui Lopes <ruieduardo.fa.lopes@av.it.pt>"]
+authors = ["André Nascimento <andrenascimento@ua.pt>", "Rui Lopes <ruieduardo.fa.lopes@av.it.pt>"]
 edition = "2018"
 
 [dependencies]
