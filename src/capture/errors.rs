@@ -41,7 +41,7 @@ pub enum CaptureError {
     #[fail(display = "The given interface does not exist.")]
     InterfaceNotFound,
     #[fail(
-    display = "The current execution does not have enough permissions to create an rx or tx channel."
+        display = "The current execution does not have enough permissions to create an rx or tx channel."
     )]
     NotEnoughPermissionsToCreateChannel,
 }
