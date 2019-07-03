@@ -1,7 +1,10 @@
+pub mod capture;
 pub mod options;
 pub mod structs;
 pub mod subcommands;
-pub mod capture;
+
+#[macro_use]
+extern crate failure;
 
 fn main() {
     let cliopts = options::get_options_from_cli();
@@ -36,8 +39,8 @@ fn main() {
                     }
                 }
                 match subcommands::profile::init(ingress, egress) {
-                    Ok(_) => {},
-                    Err(_) => {},
+                    Ok(_) => {}
+                    Err(_) => {}
                 }
             }
             _ => panic!(
