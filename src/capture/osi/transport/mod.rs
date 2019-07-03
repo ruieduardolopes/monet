@@ -20,7 +20,7 @@ use std::net::Ipv4Addr;
 /// # Arguments
 ///
 /// * `packet` - A byte-slice reference to a TCP packet
-fn handle_tcp(packet: &[u8], dest_address: Ipv4Addr) -> Result<(), CaptureError> {
+fn handle_tcp(packet: &[u8], _dest_address: Ipv4Addr) -> Result<(), CaptureError> {
     // Create the TCP packet from the raw data given as parameter to this function.
     let tcp_packet = TcpPacket::new(packet);
 

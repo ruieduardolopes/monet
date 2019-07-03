@@ -13,7 +13,6 @@ use pnet::datalink::Channel::*;
 use pnet::datalink::{channel, interfaces};
 use pnet::datalink::{DataLinkReceiver, DataLinkSender, NetworkInterface};
 use pnet::packet::ethernet::{EthernetPacket, MutableEthernetPacket};
-use std::net::Ipv4Addr;
 
 const BUFFER_INIT: u8 = 0u8;
 const BUFFER_SIZE: usize = 1600;
@@ -83,10 +82,10 @@ pub fn get_interface_channels(
 
 // TODO : document this function.
 pub fn execute_once(
-    (channel_tx, channel_rx): (&mut Box<DataLinkSender>, &mut Box<DataLinkReceiver>),
+    (_channel_tx, channel_rx): (&mut Box<DataLinkSender>, &mut Box<DataLinkReceiver>),
 ) -> Result<(CaptureResult, Vec<u8>), CaptureError> {
     let mut buffer: [u8; BUFFER_SIZE] = [BUFFER_INIT; BUFFER_SIZE];
-    let mut ethernet_frame = MutableEthernetPacket::new(&mut buffer[..]).unwrap();
+    let mut _ethernet_frame = MutableEthernetPacket::new(&mut buffer[..]).unwrap();
     match channel_rx.next() {
         Ok(packet) => {
             match datalink::handle_ethernet_frame(&EthernetPacket::new(packet).unwrap()) {
@@ -94,16 +93,16 @@ pub fn execute_once(
                 Err(error) => return Err(error),
             }
         }
-        Err(e) => return Err(CaptureError::UnrecognizableDatalinkPacket),
+        Err(_e) => return Err(CaptureError::UnrecognizableDatalinkPacket),
     }
 }
 
 // TODO : document this function.
 pub fn execute_once_raw(channel_rx: &mut Box<DataLinkReceiver>) -> Result<&[u8], CaptureError> {
     let mut buffer: [u8; BUFFER_SIZE] = [BUFFER_INIT; BUFFER_SIZE];
-    let mut ethernet_frame = MutableEthernetPacket::new(&mut buffer[..]).unwrap();
+    let mut _ethernet_frame = MutableEthernetPacket::new(&mut buffer[..]).unwrap();
     match channel_rx.next() {
         Ok(packet) => Ok(packet),
-        Err(e) => return Err(CaptureError::UndefinedPacket),
+        Err(_e) => return Err(CaptureError::UndefinedPacket),
     }
 }

@@ -57,7 +57,7 @@ pub fn handle_ipv4_packet(packet: &EthernetPacket) -> Result<CaptureResult, Capt
 /// * `packet` - A slice representing a tunneled IPv4 packet
 pub fn handle_ipv4_tunneled_packet(
     packet: &[u8],
-    last_dest_address: Ipv4Addr,
+    _last_dest_address: Ipv4Addr,
 ) -> Result<CaptureResult, CaptureError> {
     // Read the received packet's payload as an IPv4 packet.
     let ipv4_packet = Ipv4Packet::new(packet);

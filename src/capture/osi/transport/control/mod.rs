@@ -1,6 +1,5 @@
 use crate::capture::errors::*;
 use crate::capture::packets::control::rtcp::RtcpPacket;
-use crate::capture::packets::control::types::rr::RtcpRrPacket;
 use crate::capture::packets::control::types::sr::RtcpSrPacket;
 use crate::capture::results::*;
 
