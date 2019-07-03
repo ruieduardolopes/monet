@@ -3,8 +3,9 @@
 //! Module responsible for managing the analysis of OSI's model Layer II payloads, retrieving
 //! Layer III packets to respective handlers, in the `network` module.
 
-use crate::capture::{network, CaptureResult};
-use crate::error::CaptureError;
+use crate::capture::errors::*;
+use crate::capture::osi::*;
+use crate::capture::results::*;
 
 use pnet::packet::ethernet::{EtherTypes, EthernetPacket};
 

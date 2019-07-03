@@ -1,3 +1,6 @@
+pub mod identifications;
+pub mod structs;
+
 use crate::capture::errors::*;
 use crate::capture::results::*;
 use crate::capture::packets::multimedia::rtp_h264_nal::H264NalPacket;
@@ -5,11 +8,9 @@ use crate::capture::packets::multimedia::rtp_h264_nal_fu_a::non_idr_slice::rtp_h
 use crate::capture::packets::multimedia::rtp_h264_nal_fu_a::rtp_h264_nal_fu_a::H264NalFuAPacket;
 use crate::capture::packets::transport::rtp::RtpPacket;
 
-// FIXME
-use crate::fragment::Fragment;
-use crate::frame::*;
-use crate::identification::*;
-
+use crate::capture::osi::transport::multimedia::identifications::*;
+use crate::capture::osi::transport::multimedia::structs::fragment::*;
+use crate::capture::osi::transport::multimedia::structs::frame::*;
 use pnet::packet::Packet;
 use std::net::Ipv4Addr;
 

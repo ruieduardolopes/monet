@@ -4,8 +4,9 @@
 //! Layer III packets to respective handlers if the packet has tunnel headers, or Layer IV packets
 //! to transport handlers, in the `transport` module.
 
-use crate::capture::{transport, CaptureResult};
-use crate::error::CaptureError;
+use crate::capture::errors::*;
+use crate::capture::osi::*;
+use crate::capture::results::*;
 
 use pnet::packet::ethernet::EthernetPacket;
 use pnet::packet::ip::IpNextHeaderProtocols;
