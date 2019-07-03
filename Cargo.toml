@@ -6,4 +6,6 @@ edition = "2018"
 
 [dependencies]
 clap = "2.33"
+failure = "0.1"
 pnet = "0.22"
+pnet_macros_support = "0.22"
