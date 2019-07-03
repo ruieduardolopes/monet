@@ -1,22 +1,50 @@
 pub mod options;
 pub mod structs;
 pub mod subcommands;
+pub mod capture;
 
 fn main() {
     let cliopts = options::get_options_from_cli();
 
     match cliopts.subcommand_name() {
-        Some(subcommand_string) => match subcommand {
-            "perf" => match subcommands::client::init() {
-                Ok(_) => {},
-                Err(_) => {},
-            },
-            "interface" => match subcommands::server::init() {
-                Ok(_) => {},
-                Err(_) => {},
-            },
-            _ => panic!("The inserted subcommand {} does not belong to the list of subcommands.", subcommand),
-        }
-        None => panic!("No subcommand was inserted. This execution needs one to proceed.")
+        Some(subcommand_string) => match subcommand_string {
+            "profile" => {
+                let mut ingress = String::new();
+                let mut egress = String::new();
+                match cliopts
+                    .subcommand_matches(subcommand_string)
+                    .unwrap()
+                    .value_of("ingress-interfaces")
+                {
+                    Some(ingress_interfaces) => {
+                        ingress = String::from(ingress_interfaces);
+                    }
+                    None => {
+                        panic!("Value of ingress interface was not assigned.");
+                    }
+                }
+                match cliopts
+                    .subcommand_matches(subcommand_string)
+                    .unwrap()
+                    .value_of("egress-interfaces")
+                {
+                    Some(egress_interfaces) => {
+                        egress = String::from(egress_interfaces);
+                    }
+                    None => {
+                        panic!("Value of egress interface was not assigned.");
+                    }
+                }
+                match subcommands::profile::init(ingress, egress) {
+                    Ok(_) => {},
+                    Err(_) => {},
+                }
+            }
+            _ => panic!(
+                "The inserted subcommand {} does not belong to the list of subcommands.",
+                subcommand_string
+            ),
+        },
+        None => panic!("No subcommand was inserted. This execution needs one to proceed."),
     }
 }
