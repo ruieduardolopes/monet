@@ -1,0 +1,48 @@
+dist: trusty
+language: rust
+services: docker
+sudo: required
+
+env:
+  global:
+    - CRATE_NAME=monet
+
+matrix:
+  include:
+    # MIPS target
+    - env: TARGET=mips-unknown-linux-gnu
+    # Linux target x86_64
+    - env: TARGET=x86_64-unknown-linux-gnu
+    # macOS 64 bits target
+    - env: TARGET=x86_64-apple-darwin
+      os: osx
+
+before_install:
+  - set -e
+  - rustup self update
+
+install:
+  - sh deployments/install.sh
+  - source ~/.cargo/env || true
+
+script:
+  - bash deployments/tests.sh
+
+after_script: set +e
+
+cache: cargo
+before_cache:
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
+
+branches:
+  only:
+    # release tags
+    - /^v\d+\.\d+\.\d+.*$/
+    - master
+
+notifications:
+  email:
+    on_sucess: never
+    recipients:
+      - ruieduardo.fa.lopes@ua.pt
