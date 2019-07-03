@@ -1,0 +1,9 @@
+pub const END: u8 = 0;
+pub const CNAME: u8 = 1;
+pub const NAME: u8 = 2;
+pub const EMAIL: u8 = 3;
+pub const PHONE: u8 = 4;
+pub const LOC: u8 = 5;
+pub const TOOL: u8 = 6;
+pub const NOTE: u8 = 7;
+pub const PRIV: u8 = 8;
