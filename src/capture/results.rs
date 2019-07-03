@@ -1,5 +1,8 @@
 use std::net::Ipv4Addr;
 
+use crate::capture::osi::transport::multimedia::structs::fragment::Fragment;
+use crate::capture::osi::transport::multimedia::structs::frame::Frame;
+
 pub enum CaptureResult {
     Frame(Frame),
     Fragment(Fragment),
