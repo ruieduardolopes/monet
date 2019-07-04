@@ -3,6 +3,7 @@
 
 pub mod capture;
 pub mod options;
+pub mod report;
 pub mod structs;
 pub mod subcommands;
 
