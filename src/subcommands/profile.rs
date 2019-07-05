@@ -1,6 +1,6 @@
 use crate::capture::interfaces::*;
-
 use crate::structs::node::Node;
+
 use regex::Regex;
 use std::io::Error;
 use std::thread;
@@ -17,7 +17,7 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
             thread::spawn({
                 let interface = interface.clone();
                 move || {
-                    analyze_interface(interface);
+                    analyze_interface(true, interface);
                 }
             })
         })
@@ -31,7 +31,7 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
             thread::spawn({
                 let interface = interface.clone();
                 move || {
-                    analyze_interface(interface);
+                    analyze_interface(false, interface);
                 }
             })
         })
