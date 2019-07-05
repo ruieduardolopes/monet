@@ -26,4 +26,12 @@ impl Node {
             egress_interfaces,
         }
     }
+
+    pub fn ingress(&self) -> Vec<String> {
+        self.ingress_interfaces.clone()
+    }
+
+    pub fn egress(&self) -> Vec<String> {
+        self.egress_interfaces.clone()
+    }
 }
