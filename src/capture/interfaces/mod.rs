@@ -1,13 +1,18 @@
 use crate::capture::results::*;
 use crate::capture::{execute_once, get_interface_channels};
+use crate::report;
+
+use slog::{info, Logger};
 use std::io::Error;
 
-pub fn analyze_interface(interface: String) -> Result<(), Error> {
+pub fn analyze_interface(ingress: bool, interface: String) -> Result<(), Error> {
+    let reporter = report::init(ingress, interface.clone());
+
     let (mut tx, mut rx) = match get_interface_channels(&interface) {
         Ok(channels) => channels,
         Err(error) => {
             panic!(
-                "Thread's dead while trying to capture in interface {}. Error is {}.",
+                "Thread died while trying to capture in interface {}. Error is {}.",
                 interface, error
             );
         }
@@ -15,15 +20,13 @@ pub fn analyze_interface(interface: String) -> Result<(), Error> {
 
     loop {
         match execute_once((&mut tx, &mut rx)) {
-            Ok(result) => match result.0 {
-                CaptureResult::Frame(_) => {}
-                CaptureResult::Fragment(_) => {}
-                CaptureResult::LastFragment(_) => {}
-                CaptureResult::SequenceParameterSet => {}
-                CaptureResult::PictureParameterSet => {}
-                CaptureResult::Stream(_, _, _, _) => {}
-                CaptureResult::Other => {}
-            },
+            Ok(result) => {
+                match result.0 {
+                    CaptureResult::Other => continue,
+                    _ => (),
+                };
+                info!(reporter, "{}", result.0);
+            }
             Err(error) => match error {
                 _ => (),
             },
