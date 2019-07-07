@@ -1,6 +1,7 @@
 #![allow(unused_assignments)]
 #![allow(unused_imports)]
 
+pub mod analysis;
 pub mod capture;
 pub mod options;
 pub mod report;
@@ -54,7 +55,7 @@ fn main() {
                     },
                 }
                 match subcommands::profile::init(ingress, egress, filter) {
-                    Ok(_) => {}
+                    Ok(captures) => {}
                     Err(_) => {}
                 }
             }

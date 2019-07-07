@@ -5,8 +5,9 @@ use crate::report;
 use slog::{info, Logger};
 use std::io::Error;
 
-pub fn analyze_interface(ingress: bool, interface: String) -> Result<(), Error> {
+pub fn analyze_interface(ingress: bool, interface: String) -> Result<Vec<CaptureResult>, Error> {
     let reporter = report::init(ingress, interface.clone());
+    let mut internal_report: Vec<CaptureResult> = Vec::new();
 
     let (mut tx, mut rx) = match get_interface_channels(&interface) {
         Ok(channels) => channels,
@@ -26,6 +27,7 @@ pub fn analyze_interface(ingress: bool, interface: String) -> Result<(), Error> 
                     _ => (),
                 };
                 info!(reporter, "{}", result.0);
+                internal_report.push(result.0);
             }
             Err(error) => match error {
                 _ => (),
@@ -33,5 +35,5 @@ pub fn analyze_interface(ingress: bool, interface: String) -> Result<(), Error> 
         }
     }
 
-    Ok(())
+    Ok(internal_report)
 }
