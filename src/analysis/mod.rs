@@ -1,10 +1,27 @@
-use std::collections::BTreeMap;
-
 use crate::capture::results::*;
+
+use ipnetwork::IpNetwork;
+use pnet::datalink::NetworkInterface;
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Error;
 
-pub fn run_struct(captures: &BTreeMap<String, Vec<CaptureResult>>) -> Result<(), Error> {
+fn is_this_machine(address: IpNetwork) -> bool {
+    let all_interfaces: Vec<NetworkInterface> = pnet::datalink::interfaces();
+
+    match address {
+        IpNetwork::V4(address) => all_interfaces
+            .iter()
+            .find(|interface| interface.ips.contains(&IpNetwork::V4(address)))
+            .is_some(),
+        IpNetwork::V6(address) => all_interfaces
+            .iter()
+            .find(|interface| interface.ips.contains(&IpNetwork::V6(address)))
+            .is_some(),
+    }
+}
+
+pub fn run_internal_struct(captures: &BTreeMap<String, Vec<CaptureResult>>) -> Result<(), Error> {
     // Retrieve vector with all keys from captures.
     let mut captures_keys = captures.keys().cloned().collect::<Vec<String>>();
 
@@ -24,6 +41,19 @@ pub fn run_struct(captures: &BTreeMap<String, Vec<CaptureResult>>) -> Result<(),
         egress_captures.insert(item.clone(), captures.get(&item).unwrap().clone());
     }
 
+    // Discard everything on ingress interfaces coming to this machine (and count no. of packets).
+
+
+    // Discard everything on egress interfaces going out of this machine (and count no. of packets).
+
+
+    // Count the difference of elements between both BTreeMaps by number (after a filter).
+
+
+    // Merge both BTreeMaps as sets and delete equivalent items.
+
+
+    // The lasting items, as they could be more or less than the usual, if less, are loss packets.
 
 
     Ok(())
