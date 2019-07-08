@@ -29,6 +29,7 @@ pub fn handle_rtcp(
                         dest_address,
                         port,
                         sender_report.get_rtp_timestamp(),
+                        time::now_utc().to_timespec().sec
                     ));
                 }
                 return Err(CaptureError::MalformedRTCPSRPacket);

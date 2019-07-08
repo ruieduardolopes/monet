@@ -23,7 +23,7 @@ pub fn analyze_interface(ingress: bool, interface: String) -> Result<Vec<Capture
         match execute_once((&mut tx, &mut rx)) {
             Ok(result) => {
                 match result.0 {
-                    CaptureResult::Other => continue,
+                    CaptureResult::Other(timestamp) => continue,
                     _ => (),
                 };
                 info!(reporter, "{}", result.0);

@@ -86,7 +86,7 @@ pub fn handle(
         // If this packet is a TCP, handle it as TCP.
         IpNextHeaderProtocols::Tcp => {
             handle_tcp(packet, dest_address).unwrap();
-            Ok(CaptureResult::Other)
+            Ok(CaptureResult::Other(0))
         }
         // If this packet is a UDP, handle it as UDP.
         IpNextHeaderProtocols::Udp => match handle_udp(packet, dest_address) {

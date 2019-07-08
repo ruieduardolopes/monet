@@ -1,25 +1,25 @@
-use std::net::Ipv4Addr;
-
 use crate::capture::osi::transport::multimedia::structs::fragment::Fragment;
 use crate::capture::osi::transport::multimedia::structs::frame::Frame;
+
+use std::net::Ipv4Addr;
 use core::fmt;
 use std::fmt::Display;
 
 #[derive(Deserialize, Serialize)]
 pub enum CaptureResult {
-    Frame(Frame),
-    Fragment(Fragment),
-    LastFragment(Fragment),
-    SequenceParameterSet,
-    PictureParameterSet,
-    Stream(u32, Ipv4Addr, u16, u32), // ssrc, port, last timestamp
-    Other,
+    Frame(Frame, i64),
+    Fragment(Fragment, i64),
+    LastFragment(Fragment, i64),
+    SequenceParameterSet(Ipv4Addr, i64),
+    PictureParameterSet(Ipv4Addr, i64),
+    Stream(u32, Ipv4Addr, u16, u32, i64), // ssrc, port, last timestamp
+    Other(i64),
 }
 
 impl Display for CaptureResult {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            CaptureResult::Frame(frame) => write!(
+            CaptureResult::Frame(frame, timestamp) => write!(
                 f,
                 "[monet] frame {} {} {} {} {} {}",
                 frame.timestamp,
@@ -27,37 +27,38 @@ impl Display for CaptureResult {
                 frame.stream_port,
                 frame.ssrc,
                 frame.mpeg_type,
-                time::now_utc().to_timespec().sec
+                timestamp
             ),
-            CaptureResult::Fragment(fragment) => write!(
+            CaptureResult::Fragment(fragment, timestamp) => write!(
                 f,
                 "[monet] {} {} {} {} not-last {}",
                 fragment.timestamp,
                 fragment.dest_address,
                 fragment.stream_port,
                 fragment.ssrc,
-                time::now_utc().to_timespec().sec
+                timestamp
             ),
-            CaptureResult::LastFragment(fragment) => write!(
+            CaptureResult::LastFragment(fragment, timestamp) => write!(
                 f,
                 "[monet] {} {} {} {} last {}",
                 fragment.timestamp,
                 fragment.dest_address,
                 fragment.stream_port,
                 fragment.ssrc,
-                time::now_utc().to_timespec().sec
+                timestamp
             ),
-            CaptureResult::SequenceParameterSet => {
-                write!(f, "[monet] sps {}", time::now_utc().to_timespec().sec)
+            CaptureResult::SequenceParameterSet(dst_address, timestamp) => {
+                write!(f, "[monet] sps {} {}", dst_address, timestamp)
             }
-            CaptureResult::PictureParameterSet => {
-                write!(f, "[monet] pps {}", time::now_utc().to_timespec().sec)
+            CaptureResult::PictureParameterSet(dst_address, timestamp) => {
+                write!(f, "[monet] pps {} {}", dst_address, timestamp)
             }
             CaptureResult::Stream(
                 ssrc,
                 destination_address,
                 destination_port,
                 last_known_timestamp,
+                timestamp
             ) => write!(
                 f,
                 "[monet] stream {} {} {} {} {}",
@@ -65,7 +66,7 @@ impl Display for CaptureResult {
                 destination_address,
                 destination_port,
                 ssrc,
-                time::now_utc().to_timespec().sec
+                timestamp
             ),
             _ => Ok(()),
         }
