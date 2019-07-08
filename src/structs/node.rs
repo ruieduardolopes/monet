@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Node {
     ingress_interfaces: Vec<String>,
     egress_interfaces: Vec<String>,

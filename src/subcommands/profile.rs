@@ -1,57 +1,46 @@
 use crate::capture::interfaces::*;
+use crate::capture::results::CaptureResult;
 use crate::structs::node::Node;
 
 use regex::Regex;
-use std::io::Error;
-use std::thread;
-use std::thread::JoinHandle;
 use std::collections::BTreeMap;
-use crate::capture::results::CaptureResult;
 use std::fs::File;
+use std::io::Error;
+//use std::thread;
+//use std::thread::JoinHandle;
+use crossbeam_utils::thread;
 
-pub fn init(ingress: String, egress: String, filter: Regex) -> Result<BTreeMap<String, Vec<CaptureResult>>, Error> {
+pub fn init(
+    ingress: String,
+    egress: String,
+    filter: Regex,
+) -> Result<BTreeMap<String, Vec<CaptureResult>>, Error> {
     let node = Node::new(ingress, egress);
     let mut captures: BTreeMap<String, Vec<CaptureResult>> = BTreeMap::new();
 
     // Start a thread with a capture on the given ingress interface.
-    let ingress_threads: Vec<JoinHandle<_>> = node
-        .ingress()
-        .iter()
-        .map(|interface| {
-            thread::spawn({
-                let interface = interface.clone();
-                move || {
-                    captures.insert(interface.clone(), analyze_interface(true, interface)?);
-                }
-            })
-        })
-        .collect();
+    for interface_index in 0..node.ingress().len() {
+        thread::scope(|scope| {
+            scope.spawn(|_| {
+                let interface = node.ingress().get(interface_index).unwrap().clone();
+                captures.insert(format!("{}-{}", "ingress", interface), analyze_interface(true, interface).unwrap())
+            });
+        });
+    }
 
     // Start a thread with a capture on the given egress interface.
-    let egress_threads: Vec<JoinHandle<_>> = node
-        .egress()
-        .iter()
-        .map(|interface| {
-            thread::spawn({
-                let interface = interface.clone();
-                move || {
-                    captures.insert(interface.clone(), analyze_interface(false, interface)?);
-                }
-            })
-        })
-        .collect();
+    for interface_index in 0..node.egress().len() {
+        thread::scope(|scope| {
+            scope.spawn(|_| {
+                let interface = node.egress().get(interface_index).unwrap().clone();
+                captures.insert(format!("{}-{}", "egress", interface), analyze_interface(true, interface).unwrap())
+            });
+        });
+    }
 
     // Serialize `captures` BTreeMap in order to load it later.
-    let mut file = File::create("~/.monet/captures.mnt")?;
-    bincode::serialize_into(&mut file, &captures)?;
-
-    // Join threads as soon as they end their job.
-    ingress_threads
-        .into_iter()
-        .map(|thread| thread.join().unwrap());
-    egress_threads
-        .into_iter()
-        .map(|thread| thread.join().unwrap());
+    let mut file = File::create("~/.monet/captures.mnt").unwrap();
+    bincode::serialize_into(&mut file, &captures).unwrap();
 
     Ok(captures)
 }
