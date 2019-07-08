@@ -1,7 +1,7 @@
 use std::fmt;
 use std::net::Ipv4Addr;
 
-#[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Debug, Deserialize, Serialize)]
 pub enum MPEGType {
     I,
     P,
@@ -81,6 +81,7 @@ impl From<&MPEGType> for u8 {
     }
 }
 
+#[derive(Deserialize, Serialize)]
 pub struct Frame {
     pub ssrc: u32,
     pub dest_address: Ipv4Addr,

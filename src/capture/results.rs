@@ -5,6 +5,7 @@ use crate::capture::osi::transport::multimedia::structs::frame::Frame;
 use core::fmt;
 use std::fmt::Display;
 
+#[derive(Deserialize, Serialize)]
 pub enum CaptureResult {
     Frame(Frame),
     Fragment(Fragment),
