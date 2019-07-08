@@ -1,6 +1,7 @@
 use crate::capture::interfaces::*;
 use crate::capture::results::CaptureResult;
 use crate::structs::node::Node;
+use crate::analysis;
 
 use regex::Regex;
 use std::collections::BTreeMap;
@@ -37,6 +38,9 @@ pub fn init(
             });
         });
     }
+
+    // Analyze differences, by protocol (according to a filter), between what passes as in- and egress.
+    analysis::run_internal_struct(&captures);
 
     // Serialize `captures` BTreeMap in order to load it later.
     let mut file = File::create("~/.monet/captures.mnt").unwrap();
