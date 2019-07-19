@@ -5,6 +5,7 @@ pub mod multimedia;
 
 use crate::capture::errors::*;
 use crate::capture::results::*;
+use crate::capture::results::types::*;
 
 use pnet::packet::ip::{IpNextHeaderProtocol, IpNextHeaderProtocols};
 use pnet::packet::tcp::TcpPacket;
@@ -86,7 +87,7 @@ pub fn handle(
         // If this packet is a TCP, handle it as TCP.
         IpNextHeaderProtocols::Tcp => {
             handle_tcp(packet, dest_address).unwrap();
-            Ok(CaptureResult::Other(0))
+            Ok(OtherResult::launch(0))
         }
         // If this packet is a UDP, handle it as UDP.
         IpNextHeaderProtocols::Udp => match handle_udp(packet, dest_address) {

@@ -1,0 +1,25 @@
+use crate::capture::results::CaptureResult;
+
+use std::net::Ipv4Addr;
+
+#[derive(Deserialize, Serialize)]
+pub struct PictureParameterSetResult {
+    pub destination_address: Ipv4Addr,
+    pub timestamp: i64,
+}
+
+impl PictureParameterSetResult {
+    pub fn new(destination_address: Ipv4Addr, timestamp: i64) -> Self {
+        PictureParameterSetResult {
+            destination_address,
+            timestamp,
+        }
+    }
+
+    pub fn launch(destination_address: Ipv4Addr, timestamp: i64) -> CaptureResult {
+        CaptureResult::PictureParameterSet(PictureParameterSetResult::new(
+            destination_address,
+            timestamp,
+        ))
+    }
+}

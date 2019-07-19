@@ -5,6 +5,7 @@ use crate::capture::results::*;
 
 // FIXME
 use crate::capture::osi::transport::control::identifications::rtcp_type::*;
+use crate::capture::results::types::*;
 
 use pnet::packet::Packet;
 use std::net::Ipv4Addr;
@@ -24,12 +25,12 @@ pub fn handle_rtcp(
                 let sender_report = RtcpSrPacket::new(rtcp_packet.payload());
 
                 if let Some(sender_report) = sender_report {
-                    return Ok(CaptureResult::Stream(
+                    return Ok(StreamResult::launch(
                         sender_report.get_ssrc(),
                         dest_address,
                         port,
                         sender_report.get_rtp_timestamp(),
-                        time::now_utc().to_timespec().sec
+                        time::now_utc().to_timespec().sec,
                     ));
                 }
                 return Err(CaptureError::MalformedRTCPSRPacket);

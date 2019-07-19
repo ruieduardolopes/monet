@@ -92,6 +92,22 @@ pub struct Frame {
 
 // TODO Complete this structure
 impl Frame {
+    pub fn new(
+        ssrc: u32,
+        dest_address: Ipv4Addr,
+        stream_port: u16,
+        timestamp: u32,
+        mpeg_type: MPEGType,
+    ) -> Self {
+        Frame {
+            ssrc,
+            dest_address,
+            stream_port,
+            timestamp,
+            mpeg_type,
+        }
+    }
+
     pub fn get_timestamp(&self) -> u32 {
         self.timestamp
     }

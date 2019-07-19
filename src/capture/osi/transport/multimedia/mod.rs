@@ -3,6 +3,7 @@ pub mod structs;
 
 use crate::capture::errors::*;
 use crate::capture::results::*;
+use crate::capture::results::types::*;
 use crate::capture::packets::multimedia::rtp_h264_nal::H264NalPacket;
 use crate::capture::packets::multimedia::rtp_h264_nal_fu_a::non_idr_slice::rtp_h264_nal_fu_a_non_idr_slice::H264NalFuANonIDRSlicePacket;
 use crate::capture::packets::multimedia::rtp_h264_nal_fu_a::rtp_h264_nal_fu_a::H264NalFuAPacket;
@@ -74,14 +75,12 @@ pub fn handle_h264(
             // If this packet's type is an IDR Partition Type Unit, then handle it accordingly.
             nal::IDR_PARTITION => {
                 println!("This is a I-frame");
-                Ok(CaptureResult::Frame(
-                    Frame {
-                        ssrc,
-                        dest_address,
-                        stream_port: port,
-                        timestamp,
-                        mpeg_type: MPEGType::I,
-                    },
+                Ok(FrameResult::launch(
+                    ssrc,
+                    dest_address,
+                    port,
+                    timestamp,
+                    MPEGType::I,
                     time::now_utc().to_timespec().sec,
                 ))
             }
@@ -118,23 +117,19 @@ pub fn handle_fu_a(
             nal::NON_IDR_SLICE => {
                 if fu_a_packet.get_start_bit() == 0 {
                     if fu_a_packet.get_end_bit() == 1 {
-                        Ok(CaptureResult::LastFragment(
-                            Fragment {
-                                ssrc,
-                                dest_address,
-                                stream_port: port,
-                                timestamp,
-                            },
+                        Ok(LastFragmentResult::launch(
+                            ssrc,
+                            dest_address,
+                            port,
+                            timestamp,
                             time::now_utc().to_timespec().sec,
                         ))
                     } else {
-                        Ok(CaptureResult::Fragment(
-                            Fragment {
-                                ssrc,
-                                dest_address,
-                                stream_port: port,
-                                timestamp,
-                            },
+                        Ok(FragmentResult::launch(
+                            ssrc,
+                            dest_address,
+                            port,
+                            timestamp,
                             time::now_utc().to_timespec().sec,
                         ))
                     }
@@ -145,14 +140,12 @@ pub fn handle_fu_a(
             // If this packet's unit type is an IDR slice (I-slice), handle it.
             nal::IDR_PARTITION => {
                 if fu_a_packet.get_start_bit() == 1 {
-                    Ok(CaptureResult::Frame(
-                        Frame {
-                            ssrc,
-                            dest_address,
-                            stream_port: port,
-                            timestamp,
-                            mpeg_type: MPEGType::I,
-                        },
+                    Ok(FrameResult::launch(
+                        ssrc,
+                        dest_address,
+                        port,
+                        timestamp,
+                        MPEGType::I,
                         time::now_utc().to_timespec().sec,
                     ))
                 } else {
@@ -160,12 +153,12 @@ pub fn handle_fu_a(
                 }
             }
             // If this packet's unit type is a SPS, handle it.
-            nal::SPS => Ok(CaptureResult::SequenceParameterSet(
+            nal::SPS => Ok(SequenceParameterSetResult::launch(
                 dest_address,
                 time::now_utc().to_timespec().sec,
             )),
             // If this packet's unit type is a PPS, handle it.
-            nal::PPS => Ok(CaptureResult::PictureParameterSet(
+            nal::PPS => Ok(PictureParameterSetResult::launch(
                 dest_address,
                 time::now_utc().to_timespec().sec,
             )),
@@ -199,36 +192,30 @@ pub fn handle_slice(
         // Identify this slice type, and handle it.
         match slice_packet.get_slice_type() {
             // If this is an individual P-slice, handle it.
-            slice::INDIVIDUAL_SLICE_P => Ok(CaptureResult::Frame(
-                Frame {
-                    ssrc,
-                    dest_address,
-                    stream_port,
-                    timestamp,
-                    mpeg_type: MPEGType::P,
-                },
+            slice::INDIVIDUAL_SLICE_P => Ok(FrameResult::launch(
+                ssrc,
+                dest_address,
+                stream_port,
+                timestamp,
+                MPEGType::P,
                 time::now_utc().to_timespec().sec,
             )),
             // If this is an individual B-slice, handle it.
-            slice::INDIVIDUAL_SLICE_B => Ok(CaptureResult::Frame(
-                Frame {
-                    ssrc,
-                    dest_address,
-                    stream_port,
-                    timestamp,
-                    mpeg_type: MPEGType::B,
-                },
+            slice::INDIVIDUAL_SLICE_B => Ok(FrameResult::launch(
+                ssrc,
+                dest_address,
+                stream_port,
+                timestamp,
+                MPEGType::B,
                 time::now_utc().to_timespec().sec,
             )),
             // If this is an individual I-slice, handle it.
-            slice::INDIVIDUAL_SLICE_I => Ok(CaptureResult::Frame(
-                Frame {
-                    ssrc,
-                    dest_address,
-                    stream_port,
-                    timestamp,
-                    mpeg_type: MPEGType::I,
-                },
+            slice::INDIVIDUAL_SLICE_I => Ok(FrameResult::launch(
+                ssrc,
+                dest_address,
+                stream_port,
+                timestamp,
+                MPEGType::I,
                 time::now_utc().to_timespec().sec,
             )),
             // If this is an individual SP-slice, handle it.
@@ -236,36 +223,30 @@ pub fn handle_slice(
             // If this is an individual SI-slice, handle it.
             slice::INDIVIDUAL_SLICE_SI => unimplemented!(),
             // If this is a P-slice, handle it.
-            slice::SLICE_P => Ok(CaptureResult::Frame(
-                Frame {
-                    ssrc,
-                    dest_address,
-                    stream_port,
-                    timestamp,
-                    mpeg_type: MPEGType::P,
-                },
+            slice::SLICE_P => Ok(FrameResult::launch(
+                ssrc,
+                dest_address,
+                stream_port,
+                timestamp,
+                MPEGType::P,
                 time::now_utc().to_timespec().sec,
             )),
             // If this is a B-slice, handle it.
-            slice::SLICE_B => Ok(CaptureResult::Frame(
-                Frame {
-                    ssrc,
-                    dest_address,
-                    stream_port,
-                    timestamp,
-                    mpeg_type: MPEGType::B,
-                },
+            slice::SLICE_B => Ok(FrameResult::launch(
+                ssrc,
+                dest_address,
+                stream_port,
+                timestamp,
+                MPEGType::B,
                 time::now_utc().to_timespec().sec,
             )),
             // If this is a I-slice, handle it.
-            slice::SLICE_I => Ok(CaptureResult::Frame(
-                Frame {
-                    ssrc,
-                    dest_address,
-                    stream_port,
-                    timestamp,
-                    mpeg_type: MPEGType::I,
-                },
+            slice::SLICE_I => Ok(FrameResult::launch(
+                ssrc,
+                dest_address,
+                stream_port,
+                timestamp,
+                MPEGType::I,
                 time::now_utc().to_timespec().sec,
             )),
             // If this is a SP-slice, handle it.

@@ -7,3 +7,14 @@ pub struct Fragment {
     pub stream_port: u16,
     pub timestamp: u32,
 }
+
+impl Fragment {
+    pub fn new(ssrc: u32, dest_address: Ipv4Addr, stream_port: u16, timestamp: u32) -> Self {
+        Fragment {
+            ssrc,
+            dest_address,
+            stream_port,
+            timestamp,
+        }
+    }
+}
