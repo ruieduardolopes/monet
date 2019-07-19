@@ -5,7 +5,8 @@ use crate::report;
 use slog::{info, Logger};
 use std::io::Error;
 
-pub fn analyze_interface(ingress: bool, interface: String) -> Result<Vec<CaptureResult>, Error> {
+pub fn run_capture
+(ingress: bool, interface: String) -> Result<Vec<CaptureResult>, Error> {
     let reporter = report::init(ingress, interface.clone());
     let mut internal_report: Vec<CaptureResult> = Vec::new();
 

@@ -7,8 +7,6 @@ use regex::Regex;
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Error;
-//use std::thread;
-//use std::thread::JoinHandle;
 use crossbeam_utils::thread;
 
 pub fn init(
@@ -24,7 +22,7 @@ pub fn init(
         thread::scope(|scope| {
             scope.spawn(|_| {
                 let interface = node.ingress().get(interface_index).unwrap().clone();
-                captures.insert(format!("{}-{}", "ingress", interface), analyze_interface(true, interface).unwrap())
+                captures.insert(format!("{}-{}", "ingress", interface), run_capture(true, interface).unwrap())
             });
         });
     }
@@ -34,7 +32,7 @@ pub fn init(
         thread::scope(|scope| {
             scope.spawn(|_| {
                 let interface = node.egress().get(interface_index).unwrap().clone();
-                captures.insert(format!("{}-{}", "egress", interface), analyze_interface(true, interface).unwrap())
+                captures.insert(format!("{}-{}", "egress", interface), run_capture(true, interface).unwrap())
             });
         });
     }
