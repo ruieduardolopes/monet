@@ -7,6 +7,7 @@ edition = "2018"
 [dependencies]
 bincode = "1.1"
 clap = "2.33"
+crossbeam-deque = "0.7"
 crossbeam-utils = "0.6"
 failure = "0.1"
 ipnetwork = "0.14"

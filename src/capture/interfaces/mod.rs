@@ -1,14 +1,18 @@
 use crate::capture::results::*;
 use crate::capture::{execute_once, get_interface_channels};
-use crate::report;
+use crate::{report, capture};
 
 use slog::{info, Logger};
 use std::io::Error;
+use regex::Regex;
+use crossbeam_deque::Worker;
+use std::thread;
 
 pub fn run_capture
-(ingress: bool, interface: String) -> Result<Vec<CaptureResult>, Error> {
+(ingress: bool, interface: String, filter: Regex) -> Result<Vec<CaptureResult>, Error> {
     let reporter = report::init(ingress, interface.clone());
     let mut internal_report: Vec<CaptureResult> = Vec::new();
+    let worker_on_queue: Worker<CaptureResult> = Worker::new_fifo();
 
     let (mut tx, mut rx) = match get_interface_channels(&interface) {
         Ok(channels) => channels,
@@ -20,6 +24,15 @@ pub fn run_capture
         }
     };
 
+    // Spawn filter thread with a stealer to the fifo queue variable.
+    let stealer = worker_on_queue.stealer();
+    let filter_thread = thread::spawn({
+        let stealer = stealer.clone();
+        move || {
+            capture::filter::init(filter, stealer, &mut internal_report);
+        }
+    });
+
     loop {
         match execute_once((&mut tx, &mut rx)) {
             Ok(result) => {
@@ -27,14 +40,15 @@ pub fn run_capture
                     CaptureResult::Other(timestamp) => continue,
                     _ => (),
                 };
-                info!(reporter, "{}", result.0);
-                internal_report.push(result.0);
+                worker_on_queue.push(result.0);
             }
             Err(error) => match error {
                 _ => (),
             },
         }
     }
+
+    filter_thread.join().expect("Cannot stop filter thread from its work... Panic!");
 
     Ok(internal_report)
 }

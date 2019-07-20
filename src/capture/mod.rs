@@ -1,6 +1,7 @@
 extern crate pnet;
 
 pub mod errors;
+pub mod filter;
 pub mod interfaces;
 pub mod osi;
 pub mod packets;
