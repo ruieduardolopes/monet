@@ -4,7 +4,7 @@ use regex::Regex;
 use std::io::Error;
 
 pub fn init(
-    filter: Regex,
+    filter: &Regex,
     stealer: Stealer<CaptureResult>,
     internal_reporter: &mut Vec<CaptureResult>,
 ) -> Result<(), Error> {
