@@ -34,4 +34,11 @@ impl Node {
     pub fn egress(&self) -> Vec<String> {
         self.egress_interfaces.clone()
     }
+
+    pub fn all(&self) -> Vec<(String, bool)> {
+        let mut interfaces: Vec<(String, bool)> = Vec::new();
+        self.ingress_interfaces.clone().into_iter().for_each(|element| interfaces.push((element, true)));
+        self.egress_interfaces.clone().into_iter().for_each(|element| interfaces.push((element, false)));
+        interfaces
+    }
 }
