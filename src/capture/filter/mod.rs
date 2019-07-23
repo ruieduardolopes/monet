@@ -12,9 +12,12 @@ pub fn init(
         match stealer.steal() {
             Steal::Success(result) => {
                 // TODO Apply filtering criteria here...
-                internal_reporter.push(result)
+                internal_reporter.push(result);
+                println!("internal is {:?}", internal_reporter);
             }
-            _ => {}
+            _ => {
+
+            }
         }
     }
 }

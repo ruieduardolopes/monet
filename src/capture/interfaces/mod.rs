@@ -25,13 +25,15 @@ pub fn run_capture
     };
 
     // Spawn filter thread with a stealer to the fifo queue variable.
-    let stealer = worker_on_queue.stealer();
-    let filter_thread = thread::spawn({
-        let stealer = stealer.clone();
-        move || {
-            capture::filter::init(filter, stealer, &mut internal_report);
-        }
-    });
+//    let stealer = worker_on_queue.stealer();
+//    let filter_thread = thread::spawn({
+//        let filter = filter.clone();
+//        let stealer = stealer.clone();
+//        let mut internal_report = internal_report.clone();
+//        move || {
+//            capture::filter::init(&filter, stealer, &mut internal_report);
+//        }
+//    });
 
     loop {
         match execute_once((&mut tx, &mut rx)) {
@@ -49,6 +51,10 @@ pub fn run_capture
     }
 
     filter_thread.join().expect("Cannot stop filter thread from its work... Panic!");
+
+//    filter_thread
+//        .join()
+//        .expect("Cannot stop filter thread from its work... Panic!");
 
     Ok(internal_report)
 }
