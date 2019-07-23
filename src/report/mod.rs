@@ -1,5 +1,5 @@
 use slog::{o, Drain, Logger};
-use std::fs::{OpenOptions, File};
+use std::fs::{File, OpenOptions};
 
 pub fn init(ingress: bool, interface: String) -> Logger {
     let log_file: File = if ingress {

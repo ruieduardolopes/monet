@@ -1,15 +1,21 @@
 use crate::capture::results::*;
 use crate::capture::{execute_once, get_interface_channels};
-use crate::{report, capture};
+use crate::{capture, report};
 
+use crossbeam_deque::Worker;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use regex::Regex;
 use slog::{info, Logger};
 use std::io::Error;
-use regex::Regex;
-use crossbeam_deque::Worker;
 use std::thread;
+use std::sync::Arc;
 
-pub fn run_capture
-(ingress: bool, interface: String, filter: Regex) -> Result<Vec<CaptureResult>, Error> {
+pub fn run_capture(
+    ingress: bool,
+    interface: &String,
+    filter: &Regex,
+    session: &Arc<AtomicUsize>
+) -> Result<Vec<CaptureResult>, Error> {
     let reporter = report::init(ingress, interface.clone());
     let mut internal_report: Vec<CaptureResult> = Vec::new();
     let worker_on_queue: Worker<CaptureResult> = Worker::new_fifo();
@@ -35,7 +41,30 @@ pub fn run_capture
 //        }
 //    });
 
+    const SIGINT: usize = signal_hook::SIGINT as usize;
+
+//    let controller = std::thread::spawn({
+//        let session = session.clone();
+//        move || {
+//            match session.load(Ordering::Relaxed) {
+//                SIGINT => {
+//                    println!("OUT!");
+//                    std::thread::yield_now();
+//                },
+//                _ => {}
+//            }
+//        }
+//    });
+
     loop {
+
+        match session.load(Ordering::Relaxed) {
+            SIGINT => {
+                break
+            },
+            _ => {}
+        }
+
         match execute_once((&mut tx, &mut rx)) {
             Ok(result) => {
                 match result.0 {
@@ -49,8 +78,6 @@ pub fn run_capture
             },
         }
     }
-
-    filter_thread.join().expect("Cannot stop filter thread from its work... Panic!");
 
 //    filter_thread
 //        .join()

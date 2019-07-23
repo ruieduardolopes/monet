@@ -14,6 +14,7 @@ extern crate failure;
 extern crate serde_derive;
 
 use regex::Regex;
+use rayon::prelude::*;
 
 fn main() {
     let cliopts = options::get_options_from_cli();
