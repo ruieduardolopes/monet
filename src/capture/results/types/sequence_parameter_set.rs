@@ -2,7 +2,7 @@ use crate::capture::results::CaptureResult;
 
 use std::net::Ipv4Addr;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SequenceParameterSetResult {
     pub destination_address: Ipv4Addr,
     pub timestamp: i64,

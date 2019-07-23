@@ -1,6 +1,6 @@
 use crate::capture::results::CaptureResult;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct OtherResult {
     pub timestamp: i64,
 }

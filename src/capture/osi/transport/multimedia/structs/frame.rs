@@ -81,7 +81,7 @@ impl From<&MPEGType> for u8 {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Frame {
     pub ssrc: u32,
     pub dest_address: Ipv4Addr,

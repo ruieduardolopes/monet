@@ -3,7 +3,7 @@ use crate::capture::results::CaptureResult;
 
 use std::net::Ipv4Addr;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FragmentResult {
     pub container: Fragment,
     pub timestamp: i64,

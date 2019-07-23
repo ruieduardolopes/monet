@@ -2,7 +2,7 @@ use crate::capture::results::CaptureResult;
 
 use std::net::Ipv4Addr;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct StreamResult {
     pub ssrc: u32,
     pub destination_address: Ipv4Addr,

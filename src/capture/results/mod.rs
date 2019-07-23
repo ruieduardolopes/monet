@@ -4,7 +4,7 @@ use core::fmt;
 use std::fmt::Display;
 use types::*;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum CaptureResult {
     Frame(FrameResult),
     Fragment(FragmentResult),
