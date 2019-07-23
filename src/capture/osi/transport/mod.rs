@@ -4,8 +4,8 @@ pub mod control;
 pub mod multimedia;
 
 use crate::capture::errors::*;
-use crate::capture::results::*;
 use crate::capture::results::types::*;
+use crate::capture::results::*;
 
 use pnet::packet::ip::{IpNextHeaderProtocol, IpNextHeaderProtocols};
 use pnet::packet::tcp::TcpPacket;
