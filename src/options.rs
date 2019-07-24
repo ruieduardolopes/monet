@@ -12,7 +12,8 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .takes_value(true)
                         .long("ingress-interfaces")
                         .short("i")
-                        .required(true)
+                        .required(false)
+                        .default_value("")
                         .help("Set of ingress interfaces, between quotes: i.e. \"enp0s1,wlan0\"")
                 )
                 .arg(
@@ -20,7 +21,8 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .takes_value(true)
                         .long("egress-interfaces")
                         .short("e")
-                        .required(true)
+                        .required(false)
+                        .default_value("")
                         .help("Set of egress interfaces, between quotes: i.e. \"enp0s1,wlan0\"")
                 )
                 .arg(
