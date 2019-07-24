@@ -34,7 +34,8 @@ notifications:
     - ruieduardo.fa.lopes@ua.pt
 deploy:
   provider: releases
-  api_key: 9155165212b5181ba6df14c585f4e718b1744d90
   file: target/debug/monet
+  api_key:
+    secure: ksoHxx63e86eqAlwFMr5BsiftChHLhuqbxGE794Aup0jDz09CRwarIDgwyP1ApfLQn5NlsT35zo3JwgZNrYddAizdtOnvpVLfWw5SaFdvBhTv0MrJRM8/s0wWv+IJzlq6PWwse/oJ++G3xHs62+Q8BDYTTxRnqJJzCbpwFr3SoE40laySyMYqORPSjRmWv3PJF0XxtoWhnp1Aslmc3dlJNC1N/32kaYajb3Pmn1v6gLile588ybhusnqxRlaUx5HR9yd2RLMct1FBkNTRx2iBZwaaeiINDphfVNXRyN9Res3ZYv1SjaPCwjoJbi+PmVd8TuDoOJAjl7nO+a2B0rSWMYQvltMzxfkapI/LhWhIauIbMBTPMBtif3+pUG7cmhs/LMz3cManFDdr00wKAJVsgRSWLyFL0zk8Ss5XEIZXZsdhgjL5+dyH/PwlaKwiTaY/b6xp/bVB0q9wO+uGK6eIsheCTFHlrxHCl/wLn7lhdQkmiyi45hxxfxcv76V1tPN3V5l1egrCMdZef47FpHIhkgi98V0gjTv3XYlpyMvPKqTmFohz+q81ZTq/kOu7AbIRIoJZypduSalJMz5MFjKH7YsuUaOITgmEkDVrUxzPW9mVwwO8/Hpv+FGq07lwSAxBOAnKmHB5PBbkYg65wFImUu1vRt8TPrOn06ZuTdfpwg=
   on:
     repo: ruieduardolopes/monet
