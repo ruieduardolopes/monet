@@ -30,7 +30,7 @@ impl Display for CaptureResult {
             ),
             CaptureResult::Fragment(fragment) => write!(
                 f,
-                "[monet] {} {} {} {} not-last {}",
+                "[monet] fragment {} {} {} {} not-last {}",
                 fragment.container.timestamp,
                 fragment.container.dest_address,
                 fragment.container.stream_port,
@@ -39,7 +39,7 @@ impl Display for CaptureResult {
             ),
             CaptureResult::LastFragment(fragment) => write!(
                 f,
-                "[monet] {} {} {} {} last {}",
+                "[monet] fragment {} {} {} {} last {}",
                 fragment.container.timestamp,
                 fragment.container.dest_address,
                 fragment.container.stream_port,
@@ -66,6 +66,20 @@ impl Display for CaptureResult {
                 stream.timestamp
             ),
             _ => Ok(()),
+        }
+    }
+}
+
+impl From<CaptureResult> for &str {
+    fn from(result: CaptureResult) -> Self {
+        match result {
+            CaptureResult::Frame(_) => "h264",
+            CaptureResult::Fragment(_) => "h264",
+            CaptureResult::LastFragment(_) => "h264",
+            CaptureResult::PictureParameterSet(_) => "h264",
+            CaptureResult::SequenceParameterSet(_) => "h264",
+            CaptureResult::Stream(_) => "h264",
+            _ => "",
         }
     }
 }
