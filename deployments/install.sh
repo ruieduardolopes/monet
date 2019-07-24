@@ -33,7 +33,7 @@ main() {
     esac
 
     # This fetches latest stable release
-    local tag=$(git ls-remote --tags --refs --exit-code https://github.com/japaric/cross \
+    local tag=$(git ls-remote --tags --refs --exit-code https://github.com/rust-embedded/cross \
                        | cut -d/ -f3 \
                        | grep -E '^v[0.1.0-9.]+$' \
                        | $sort --version-sort \
@@ -41,9 +41,21 @@ main() {
     curl -LSfs https://japaric.github.io/trust/install.sh | \
         sh -s -- \
            --force \
-           --git japaric/cross \
+           --git rust-embedded/cross \
            --tag $tag \
            --target $target
+
+    curl -LSfs https://archive.openwrt.org/barrier_breaker/14.07/ar71xx/mikrotik/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2 > OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2
+    tar -xf OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2
+
+    export SDK="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2"
+    export STAGING_DIR="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2/staging_dir"
+    export PATH="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin:$PATH"
+
+    cp deployments/config ~/.cargo/
+
+    cargo install xargo
+    rustup component add rust-src
 }
 
 main

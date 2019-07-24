@@ -1,6 +1,6 @@
 [package]
 name = "monet"
-version = "0.1.0"
+version = "0.1.4"
 authors = ["André Nascimento <andrenascimento@ua.pt>", "Rui Lopes <ruieduardo.fa.lopes@av.it.pt>"]
 edition = "2018"
 
@@ -22,3 +22,12 @@ slog = "2.4"
 slog-term = "2.4"
 slog-async = "2.3"
 time = "0.1"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[features]
+mips = []
