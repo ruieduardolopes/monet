@@ -1,6 +1,6 @@
 [package]
 name = "monet"
-version = "0.1.0"
+version = "0.1.3"
 authors = ["André Nascimento <andrenascimento@ua.pt>", "Rui Lopes <ruieduardo.fa.lopes@av.it.pt>"]
 edition = "2018"
 
