@@ -8,6 +8,7 @@ env:
 matrix:
   include:
   - env: TARGET=mips-unknown-linux-gnu
+  - env: TARGET=mips-unknown-linux-musl
   - env: TARGET=x86_64-unknown-linux-gnu
   - env: TARGET=x86_64-apple-darwin
     os: osx
