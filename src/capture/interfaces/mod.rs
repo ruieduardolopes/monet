@@ -31,30 +31,20 @@ pub fn run_capture(
     };
 
     // Spawn filter thread with a stealer to the fifo queue variable.
-//    let stealer = worker_on_queue.stealer();
-//    let filter_thread = thread::spawn({
-//        let filter = filter.clone();
-//        let stealer = stealer.clone();
-//        let mut internal_report = internal_report.clone();
-//        move || {
-//            capture::filter::init(&filter, stealer, &mut internal_report);
-//        }
-//    });
+    let stealer = worker_on_queue.stealer();
+    let filter_thread = thread::spawn({
+        let filter = filter.clone();
+        let stealer = stealer.clone();
+        let session = session.clone();
+        let mut internal_report = internal_report.clone();
+        move || {
+            capture::filter::init(&session, &filter, stealer, &mut internal_report);
+            println!("\nPassing to logger...");
+            report::report(&reporter, &internal_report);
+        }
+    });
 
     const SIGINT: usize = signal_hook::SIGINT as usize;
-
-//    let controller = std::thread::spawn({
-//        let session = session.clone();
-//        move || {
-//            match session.load(Ordering::Relaxed) {
-//                SIGINT => {
-//                    println!("OUT!");
-//                    std::thread::yield_now();
-//                },
-//                _ => {}
-//            }
-//        }
-//    });
 
     loop {
 
@@ -67,6 +57,7 @@ pub fn run_capture(
 
         match execute_once((&mut tx, &mut rx)) {
             Ok(result) => {
+                println!("Got something...");
                 match result.0 {
                     CaptureResult::Other(timestamp) => continue,
                     _ => (),
@@ -79,9 +70,9 @@ pub fn run_capture(
         }
     }
 
-//    filter_thread
-//        .join()
-//        .expect("Cannot stop filter thread from its work... Panic!");
+    filter_thread
+        .join()
+        .expect("Cannot stop filter thread from its work... Panic!");
 
     Ok(internal_report)
 }
