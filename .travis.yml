@@ -2,47 +2,39 @@ dist: trusty
 language: rust
 services: docker
 sudo: required
-
 env:
   global:
-    - CRATE_NAME=monet
-
+  - CRATE_NAME=monet
 matrix:
   include:
-    # MIPS target
-    - env: TARGET=mips-unknown-linux-gnu
-    # Linux target x86_64
-    - env: TARGET=x86_64-unknown-linux-gnu
-    # macOS 64 bits target
-    - env: TARGET=x86_64-apple-darwin
-      os: osx
-
+  - env: TARGET=mips-unknown-linux-gnu
+  - env: TARGET=x86_64-unknown-linux-gnu
+  - env: TARGET=x86_64-apple-darwin
+    os: osx
 before_install:
-  - set -e
-  - rustup self update
-
+- set -e
+- rustup self update
 install:
-  - sh deployments/install.sh
-  - source ~/.cargo/env || true
-
+- sh deployments/install.sh
+- source ~/.cargo/env || true
 script:
-  - bash deployments/tests.sh
-
+- bash deployments/tests.sh
 after_script: set +e
-
 cache: cargo
 before_cache:
-  # Travis can't cache files that are not readable by "others"
-  - chmod -R a+r $HOME/.cargo
-
+- chmod -R a+r $HOME/.cargo
 branches:
   only:
-    # release tags
-    - /^v\d+\.\d+\.\d+.*$/
-    - master
-
+  - "/^v\\d+\\.\\d+\\.\\d+.*$/"
+  - master
 notifications:
   email:
     on_sucess: never
     recipients:
-      - ruieduardo.fa.lopes@ua.pt
+    - ruieduardo.fa.lopes@ua.pt
+deploy:
+  provider: releases
+  api_key:
+    secure: BTU9UrCcVGi9TTpXjH8wD9/hWJfz11iIg6xKLgvwevF6+QsiRJmpetwN/irMfUvB+zB97ZxmODVZwtV3YoGWtViHpS7UGRbwOy+/EF/ds2xnSWQFXVUlDy0a237gqd4mOi06GwIaa4yvLJDquWTJGEYwjmYf6qW0wqXeqGjcqCDkSeXjvAxDdVSCYdLWdM+aFGSMNJIi3B1O1MVojC/PF+rX3UFNWBoiCQjFayrDFbs3UHrmuvdt1L/IjD5z0zlfDD3pREbDJDLTs1N82kyFEBpTg++8ZDIaxZqTGLWFbeZxzfiS2FTurEySz5Hc+feihxnmQTX8UbclQnDQppNoLnkxsOiU24g8qLO+VcxFYTOdmcOqCpORJEwVURsL22XdG4icPsQOpIGQhWhblaWpCYcoYYzIQvsQaWzDan0l0j0etCb7dAr+1HnNGTDgxQvv9hAgCKkmBnG1XSpzyyoXVYY8C/+ZYGYG3ovD3rVHugu9XAQIEUA8FzSbASstq1NA/FhFFr4rD5cHP/cEve9iUexRkG4j92vGXurUPuliWkC9RygXz3P+WEROFXXEYNDiDnhlQ8xS02EAT/cih/s0yR62Z57N46SLCPURE9/w+L8plL99P2LfwPtUXJiCuogYQvUjG8+8U37tHSRI3+c8H8sT1aZhwGWObHxfb6iMD0I=
+  on:
+    repo: ruieduardolopes/monet
