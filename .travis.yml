@@ -32,10 +32,16 @@ notifications:
     on_sucess: never
     recipients:
     - ruieduardo.fa.lopes@ua.pt
+before_deploy:
+  - sh deployments/deploy.sh
 deploy:
   provider: releases
   api_key:
     secure: QP5SrjgjzPIOfLr6+iMZalC++CXHku5YjFJ0idRIDFiiIaR6ls0HZpUtcWqiOdcMDsvVSTngv1dA8Vg+PNW4z/B9ALV2pPoyIGJizXNDO+YK3TB5Flt4OTjx4ZNp5yVg0+VFcUDcVZgK8GHMfHEuAAwxPWNQgTkOpPmkaDit5Oz3PYPlcqr8y8Q+ntTHizFeoZYoRqP1ztgWswfmyJoqo0Fzu7NG2x0OhBsA5eCJCkxl2Q5YvtKYDS24WJ0Hc+UOT77WIBP6UlumJswvmzNhWnTZYorIfuyDGjKxOti69oEvZfyxNdKPNBZfS/ZrV0umn/K0sxJvmcR/Yz2QI3EqrH21hLQCwvcwkpNt3RRRT8YcYcuBkGL3q6zHz4ikYm5rOgX4rrMbLwtRbZJ94s4qJ0gCbvUrVp/UzGYQZC+UQcwFsy+clZCgjEuUwcnp2E9hxCUBlM4a5LDGexBbb6c3eCnqiwxB0AqU4gxmRkrUIdYk3ep0YHLTvk5YTwAuJoPMhp2D5Ys+CRcwl++AoGkVFV3DrBKwsyNVgj2uJB/WOZy1LZnMc3s4qIHGD+OvFVsQsUAcRJbHbfZ9aqhf7yhod7R9s3ZrQbWDgyAY3PuzPdfNstwxMT+tHAaDL7JxHtYQHm5rwAsbdJVwVp1JbSYUiA7tehR20ibdixWQbTjkjvU=
-  file: target/debug/monet
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  skip_cleanup: true
   on:
+    condition: $TRAVIS_RUST_VERSION = stable
+    tags: true
     repo: ruieduardolopes/monet
