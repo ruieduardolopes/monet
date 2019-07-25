@@ -55,6 +55,7 @@ main() {
     cp deployments/config ~/.cargo/
 
     cargo install xargo
+    rustup component add rust-src
 }
 
 main
