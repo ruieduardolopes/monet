@@ -93,7 +93,7 @@ pub fn execute_once(
 ////        crossbeam_channel.recv()
 //
 //
-//        select!{
+//        select!{ 
 //            // ou vem o valor do ethernet channel
 //            // ou vem o valor do SIGINT channel
 //        }
