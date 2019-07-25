@@ -88,6 +88,22 @@ pub fn execute_once(
 ) -> Result<(CaptureResult, Vec<u8>), CaptureError> {
     let mut buffer: [u8; BUFFER_SIZE] = [BUFFER_INIT; BUFFER_SIZE];
     let mut _ethernet_frame = MutableEthernetPacket::new(&mut buffer[..]).unwrap();
+
+//    loop {
+////        crossbeam_channel.recv()
+//
+//
+//        select!{
+//            // ou vem o valor do ethernet channel
+//            // ou vem o valor do SIGINT channel
+//        }
+//
+//
+//    }
+
+
+
+    // thread
     match channel_rx.next() {
         Ok(packet) => {
             match datalink::handle_ethernet_frame(&EthernetPacket::new(packet).unwrap()) {
@@ -97,6 +113,11 @@ pub fn execute_once(
         }
         Err(_e) => return Err(CaptureError::UnrecognizableDatalinkPacket),
     }
+
+    //
+    // -> crossbeam_channel.try_send()
+
+    // /thread
 }
 
 // TODO : document this function.
