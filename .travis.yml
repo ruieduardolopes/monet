@@ -1,6 +1,5 @@
 dist: trusty
 language: rust
-rust: nightly
 services: docker
 sudo: required
 env:
@@ -11,6 +10,7 @@ matrix:
   # Linux Systems.
   - env: TARGET=mips-unknown-linux-gnu
   - env: TARGET=mips-unknown-linux-musl
+      rust: nightly
   - env: TARGET=x86_64-unknown-linux-gnu
 
   # macOS Systems.
