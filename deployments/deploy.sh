@@ -16,7 +16,7 @@ main() {
 
     test -f Cargo.lock || cargo generate-lockfile
 
-    if [[ $TARGET = mips-unknown-linux-musl ]]; then
+    if [ $TARGET = mips-unknown-linux-musl ]; then
         xargo build --target=mips-unknown-linux-uclibc --features mips --release --bin $CRATE_NAME
 
         cp target/$TARGET/release/$CRATE_NAME $stage/
