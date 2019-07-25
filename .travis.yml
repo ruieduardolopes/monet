@@ -10,7 +10,7 @@ matrix:
   # Linux Systems.
   - env: TARGET=mips-unknown-linux-gnu
   - env: TARGET=mips-unknown-linux-musl
-      rust: nightly
+    rust: nightly
   - env: TARGET=x86_64-unknown-linux-gnu
 
   # macOS Systems.
