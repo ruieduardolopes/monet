@@ -53,6 +53,8 @@ main() {
     export PATH="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin:$PATH"
 
     cp deployments/config ~/.cargo/
+
+    cargo install xargo
 }
 
 main
