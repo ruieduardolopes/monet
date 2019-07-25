@@ -47,6 +47,5 @@ deploy:
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   skip_cleanup: true
   on:
-    condition: $TRAVIS_RUST_VERSION = stable
     tags: true
     repo: ruieduardolopes/monet
