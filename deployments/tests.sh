@@ -6,15 +6,20 @@ set -ex
 
 # TODO This is the "test phase", tweak it as you see fit
 main() {
-    cross build --target $TARGET
-    cross build --target $TARGET --release
+    if [[ $TARGET = mips-unknown-linux-musl ]]; then
+        xargo build --target=mips-unknown-linux-uclibc --features mips --release --bin $CRATE_NAME
+    else
+        cross build --target $TARGET
+        cross build --target $TARGET --release
 
-    if [ ! -z $DISABLE_TESTS ]; then
-        return
+        if [ ! -z $DISABLE_TESTS ]; then
+            return
+        fi
+
+        cross test --target $TARGET
+        cross test --target $TARGET --release
     fi
 
-    cross test --target $TARGET
-    cross test --target $TARGET --release
 }
 
 # we don't run the "test phase" when doing deploys
