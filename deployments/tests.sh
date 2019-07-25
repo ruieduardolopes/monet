@@ -6,7 +6,7 @@ set -ex
 
 # TODO This is the "test phase", tweak it as you see fit
 main() {
-    if [[ $TARGET = mips-unknown-linux-musl ]]; then
+    if [[ $TARGET = mips-unknown-linux-uclibc ]]; then
         xargo build --target=mips-unknown-linux-uclibc --features mips --release --bin $CRATE_NAME
     else
         cross build --target $TARGET
