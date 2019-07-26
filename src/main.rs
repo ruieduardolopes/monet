@@ -12,6 +12,8 @@ pub mod subcommands;
 extern crate failure;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate crossbeam;
 
 use regex::Regex;
 use rayon::prelude::*;

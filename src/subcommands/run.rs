@@ -1,3 +1,4 @@
+use crossbeam::channel::*;
 use crossbeam_utils::thread;
 use crossbeam_utils::thread::*;
 use rayon::prelude::*;
@@ -6,14 +7,15 @@ use std::collections::BTreeMap;
 use std::fs::{File, OpenOptions};
 use std::io::Error;
 use std::path::PathBuf;
-use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
+use std::time::Duration;
 use std::{env, process};
 
 use crate::capture::interfaces::*;
 use crate::capture::results::CaptureResult;
-use crate::structs::node::Node;
 use crate::structs::node::status::NodeStatus;
+use crate::structs::node::Node;
 
 pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error> {
     // Start both ingress and egress captures.
@@ -22,6 +24,24 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
         let session = Arc::new(AtomicUsize::new(0));
         const SIGINT: usize = signal_hook::SIGINT as usize;
         signal_hook::flag::register_usize(signal_hook::SIGINT, Arc::clone(&session), SIGINT);
+
+        let (send_signal_thread, recv_signal_thread) = crossbeam::channel::unbounded();
+        let (send_main_thread, recv_main_thread) = crossbeam::channel::unbounded();
+
+        let signal_handle = scope.spawn({
+            let session = session.clone();
+            let send_signal_thread = send_signal_thread.clone();
+            move |_| {
+                loop {
+                    match session.load(Ordering::Relaxed) {
+                        SIGINT => {
+                            send_signal_thread.send(true); // Send signal through channel to capturing selection...
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        });
 
         let home = match env::var_os("HOME") {
             None => {
@@ -35,22 +55,41 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
         // Set this execution as a node with ingress and egress interfaces.
         let node = Node::new(ingress, egress);
         match node.status() {
-            NodeStatus::NotANode => panic!("Quitting, since no interfaces were given as both ingress and egress."),
+            NodeStatus::NotANode => {
+                panic!("Quitting, since no interfaces were given as both ingress and egress.")
+            }
             _ => println!("Running monet on a {}...", node.status()),
         }
 
+        let mut counter: usize = 0;
+
         // Start captures for ingress interfaces.
         node.all().par_iter().for_each(|(interface, is_ingress)| {
-            let capture = scope
-                .spawn({
-                    println!("Hello");
-                    let interface = interface.clone();
-                    let filter = filter.clone();
-                    let session = session.clone();
-                    move |_| run_capture(true, &interface, &filter, &session).unwrap()
-                })
-                .join()
-                .unwrap();
+            let mut capture: Vec<CaptureResult> = Vec::new();
+            let capture_handle = scope.spawn({
+                let interface = interface.clone();
+                let filter = filter.clone();
+                let session = session.clone();
+                let send_main_thread = send_main_thread.clone();
+                move |_| run_capture(true, &interface, &filter, &session, send_main_thread).unwrap()
+            });
+            loop {
+                select! {
+                    recv(recv_signal_thread) -> kill => {
+                        println!("quit!");
+                        break;
+                    },
+                    recv(recv_main_thread) -> result => {
+                    }
+                    default => {
+                        capture = recv_main_thread.recv().unwrap();
+                    }
+                }
+            }
+
+            println!("capture is {:#?}\
+            with size {}", capture, capture.len());
+
             let mut file = OpenOptions::new()
                 .create_new(true)
                 .write(true)
@@ -70,7 +109,9 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
                 .unwrap();
             bincode::serialize_into(&mut file, &capture).unwrap();
         });
+        std::process::exit(0);
     });
+
 
     Ok(())
 }

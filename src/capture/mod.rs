@@ -92,23 +92,23 @@ pub fn execute_once(
 //    loop {
 ////        crossbeam_channel.recv()
 //
-//
-//        select!{ 
+//        select!{
 //            // ou vem o valor do ethernet channel
 //            // ou vem o valor do SIGINT channel
 //        }
 //
-//
 //    }
-
-
 
     // thread
     match channel_rx.next() {
         Ok(packet) => {
             match datalink::handle_ethernet_frame(&EthernetPacket::new(packet).unwrap()) {
-                Ok(result) => Ok((result, Vec::from(packet))),
-                Err(error) => return Err(error),
+                Ok(result) => {
+                    Ok((result, Vec::from(packet)))
+                },
+                Err(error) => {
+                    return Err(error)
+                },
             }
         }
         Err(_e) => return Err(CaptureError::UnrecognizableDatalinkPacket),

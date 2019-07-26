@@ -4,10 +4,12 @@ use crate::capture::results::CaptureResult;
 use crate::capture::filter::filters::FilterValues;
 
 use crossbeam_deque::{Steal, Stealer};
+use crossbeam::channel::Receiver;
 use regex::Regex;
 use std::io::Error;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use crossbeam::channel::Sender;
 
 pub fn init(
     session: &Arc<AtomicUsize>,
@@ -28,13 +30,14 @@ pub fn init(
         match stealer.steal() {
             Steal::Success(result) => {
                 if filter.is_match(result.clone().into()) {
+                    print!("a");
                     internal_reporter.push(result);
                 }
             }
             _ => {
-
             }
         }
+
     }
 
     Ok(())
