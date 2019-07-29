@@ -51,30 +51,6 @@ fn get_specs(interface: String, reporter: Logger, session: &Arc<AtomicUsize>) {
             _ => {}
         }
 
-//        collisions = fs::read_to_string(format!("/sys/class/net/{}/statistics/collisions", interface)).unwrap().parse::<i64>().unwrap();
-//        multicast = fs::read_to_string(format!("/sys/class/net/{}/statistics/multicast", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_bytes = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_bytes", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_compressed = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_compressed", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_crc_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_crc_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_dropped = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_dropped", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_fifo_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_fifo_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_frame_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_frame_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_length_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_length_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_missed_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_missed_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_nohandler = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_nohandler", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_over_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_over_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        rx_packets = fs::read_to_string(format!("/sys/class/net/{}/statistics/rx_packets", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_aborted_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_aborted_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_bytes = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_bytes", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_carrier_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_carrier_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_compressed = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_compressed", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_dropped = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_dropped", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_fifo_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_fifo_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_heartbeat_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_heartbeat_errors", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_packets = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_packets", interface)).unwrap().parse::<i64>().unwrap();
-//        tx_window_errors = fs::read_to_string(format!("/sys/class/net/{}/statistics/tx_window_errors", interface)).unwrap().parse::<i64>().unwrap();
         collisions = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/collisions", interface)).unwrap())).scan().unwrap();
         multicast = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/multicast", interface)).unwrap())).scan().unwrap();
         rx_bytes = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_bytes", interface)).unwrap())).scan().unwrap();
