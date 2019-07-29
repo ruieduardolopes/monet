@@ -62,7 +62,6 @@ fn get_specs(interface: String, reporter: Logger, session: &Arc<AtomicUsize>) {
         rx_frame_errors = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_frame_errors", interface)).unwrap())).scan().unwrap();
         rx_length_errors = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_length_errors", interface)).unwrap())).scan().unwrap();
         rx_missed_errors = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_missed_errors", interface)).unwrap())).scan().unwrap();
-        rx_nohandler = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_nohandler", interface)).unwrap())).scan().unwrap();
         rx_over_errors = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_over_errors", interface)).unwrap())).scan().unwrap();
         rx_packets = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/rx_packets", interface)).unwrap())).scan().unwrap();
         tx_aborted_errors = InputStream::new(BufReader::new(File::open(format!("/sys/class/net/{}/statistics/tx_aborted_errors", interface)).unwrap())).scan().unwrap();
@@ -79,7 +78,7 @@ fn get_specs(interface: String, reporter: Logger, session: &Arc<AtomicUsize>) {
 
         info!(
             reporter,
-            "[monet] {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+            "[monet] {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
             collisions,
             multicast,
             rx_bytes,
@@ -91,7 +90,6 @@ fn get_specs(interface: String, reporter: Logger, session: &Arc<AtomicUsize>) {
             rx_frame_errors,
             rx_length_errors,
             rx_missed_errors,
-            rx_nohandler,
             rx_over_errors,
             rx_packets,
             tx_aborted_errors,
