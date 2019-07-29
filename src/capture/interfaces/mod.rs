@@ -147,7 +147,7 @@ pub fn run_capture(
             let session = session.clone();
             let reporter = interface_reporter.clone();
             move || {
-                report_specs(interface, reporter, session);
+                get_specs(interface, reporter, &session);
             }
         });
 

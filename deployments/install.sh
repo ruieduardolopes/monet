@@ -45,16 +45,23 @@ main() {
            --tag $tag \
            --target $target
 
+    echo -e "Downloading OpenWRT SDK from OpenWRT archive..."
+
     curl -LSfs https://archive.openwrt.org/barrier_breaker/14.07/ar71xx/mikrotik/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2 > OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2
     tar -xf OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2
 
     export SDK="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2"
+    echo -e "Set SDK variable as: $SDK"
     export STAGING_DIR="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2/staging_dir"
+    echo -e "Set STAGING_DIR variable as: $STAGING_DIR"
     export PATH="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin:$PATH"
+    echo -e "Set PATH variable as: $PATH"
 
+    echo -e "Copying cargo config to ~/.cargo"
     cp deployments/config ~/.cargo/
 
-    cargo install xargo
+    echo -e "Installing xargo and adding component rust-src"
+    cargo install --force xargo
     rustup component add rust-src
 }
 

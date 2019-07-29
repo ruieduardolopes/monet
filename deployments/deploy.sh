@@ -17,8 +17,10 @@ main() {
     test -f Cargo.lock || cargo generate-lockfile
 
     export PATH="$(pwd)/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin:$PATH"
+    echo -e "Set PATH variable as: $PATH"
 
     if [ $TARGET = mips-unknown-linux-uclibc ]; then
+        echo -e "Building with xargo..."
         xargo build --target=mips-unknown-linux-uclibc --features mips --release --bin $CRATE_NAME
 
         cp target/$TARGET/release/$CRATE_NAME $stage/
@@ -29,6 +31,7 @@ main() {
 
         rm -rf $stage
     else
+        echo -e "Building with cargo-cross..."
         # TODO Update this to build the artifacts that matter to you
         cross rustc --bin monet --target $TARGET --release -- -C lto
 
