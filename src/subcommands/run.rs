@@ -76,7 +76,6 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
             loop {
                 select! {
                     recv(recv_signal_thread) -> kill => {
-                        println!("quit!");
                         break;
                     },
                     recv(recv_main_thread) -> result => {
@@ -86,9 +85,6 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
                     }
                 }
             }
-
-            println!("capture is {:#?}\
-            with size {}", capture, capture.len());
 
             let mut file = OpenOptions::new()
                 .create_new(true)

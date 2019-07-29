@@ -30,7 +30,6 @@ pub fn init(
         match stealer.steal() {
             Steal::Success(result) => {
                 if filter.is_match(result.clone().into()) {
-                    print!("a");
                     internal_reporter.push(result);
                 }
             }
