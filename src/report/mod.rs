@@ -19,14 +19,14 @@ pub fn init(ingress: bool, interface: String) -> Logger {
             .create(true)
             .write(true)
             .truncate(true)
-            .open(&format!("{}/.monet/ingress-{}.log", home, interface))
+            .open(&format!("{}/.monet/ingress-{}.log", home.display(), interface))
             .unwrap()
     } else {
         OpenOptions::new()
             .create(true)
             .write(true)
             .truncate(true)
-            .open(&format!("{}/.monet/egress-{}.log", home, interface))
+            .open(&format!("{}/.monet/egress-{}.log", home.display(), interface))
             .unwrap()
     };
 
