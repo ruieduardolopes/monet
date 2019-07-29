@@ -4,21 +4,28 @@ use std::io::Error;
 
 use crate::capture::results::CaptureResult;
 use slog_async::OverflowStrategy;
+use std::env;
 
 pub fn init(ingress: bool, interface: String) -> Logger {
+    let home = match env::var_os("HOME") {
+        None => {
+            panic!("$HOME not set.");
+        }
+        Some(path) => PathBuf::from(path),
+    };
     let log_file: File = if ingress {
         OpenOptions::new()
             .create(true)
             .write(true)
             .truncate(true)
-            .open(&format!("~/.monet/ingress-{}.log", interface))
+            .open(&format!("{}/.monet/ingress-{}.log", home, interface))
             .unwrap()
     } else {
         OpenOptions::new()
             .create(true)
             .write(true)
             .truncate(true)
-            .open(&format!("~/.monet/egress-{}.log", interface))
+            .open(&format!("{}/.monet/egress-{}.log", home, interface))
             .unwrap()
     };
 
