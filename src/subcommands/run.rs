@@ -20,6 +20,15 @@ use crate::structs::node::Node;
 pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error> {
     // Start both ingress and egress captures.
     thread::scope(|scope| {
+        let home = match env::var_os("HOME") {
+            None => {
+                panic!("$HOME not set.");
+            }
+            Some(path) => PathBuf::from(path),
+        };
+        std::fs::remove_dir_all(format!("{}/.monet/", home.display())).unwrap();
+        std::fs::create_dir(format!("{}/.monet/", home.display())).unwrap();
+
         // Override instructions for handling Ctrl-C signal.
         let session = Arc::new(AtomicUsize::new(0));
         const SIGINT: usize = signal_hook::SIGINT as usize;
@@ -42,15 +51,6 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
                 }
             }
         });
-
-        let home = match env::var_os("HOME") {
-            None => {
-                panic!("$HOME not set.");
-            }
-            Some(path) => PathBuf::from(path),
-        };
-        std::fs::remove_dir_all(format!("{}/.monet/", home.display())).unwrap();
-        std::fs::create_dir(format!("{}/.monet/", home.display())).unwrap();
 
         // Set this execution as a node with ingress and egress interfaces.
         let node = Node::new(ingress, egress);
@@ -107,7 +107,6 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
         });
         std::process::exit(0);
     });
-
 
     Ok(())
 }
