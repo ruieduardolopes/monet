@@ -2,7 +2,7 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 
 pub fn get_options_from_cli() -> ArgMatches<'static> {
     App::new("Monet: Monitor a Network")
-        .version("0.1.5-rc6")
+        .version("0.1.5-rc7")
         .author("André Nascimento and Rui Lopes")
         .about("Tool to get some insights on a network or interfaces")
         .subcommand(
