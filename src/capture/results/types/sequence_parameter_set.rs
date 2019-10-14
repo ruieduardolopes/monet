@@ -16,10 +16,10 @@ impl SequenceParameterSetResult {
         }
     }
 
-    pub fn launch(destination_address: Ipv4Addr, timestamp: i64) -> CaptureResult {
+    pub fn launch(destination_address: Ipv4Addr, packet_length: u16, timestamp: i64) -> CaptureResult {
         CaptureResult::SequenceParameterSet(SequenceParameterSetResult::new(
             destination_address,
             timestamp,
-        ))
+        ), packet_length)
     }
 }

@@ -16,6 +16,7 @@ pub fn handle_rtcp(
     packet: &[u8],
     dest_address: Ipv4Addr,
     port: u16,
+    packet_length: u16,
 ) -> Result<CaptureResult, CaptureError> {
     let rtcp_packet = RtcpPacket::new(packet);
 
@@ -29,6 +30,7 @@ pub fn handle_rtcp(
                         sender_report.get_ssrc(),
                         dest_address,
                         port,
+                        packet_length,
                         sender_report.get_rtp_timestamp(),
                         time::now_utc().to_timespec().sec,
                     ));

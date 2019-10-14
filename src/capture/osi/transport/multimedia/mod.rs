@@ -25,6 +25,7 @@ pub fn handle_rtp(
     packet: &[u8],
     dest_address: Ipv4Addr,
     port: u16,
+    packet_length: u16,
 ) -> Result<CaptureResult, CaptureError> {
     // Create an RTP packet from the raw data given as parameter to this function.
     let rtp_packet = RtpPacket::new(packet);
@@ -39,6 +40,7 @@ pub fn handle_rtp(
                 rtp_packet.get_ssrc(),
                 dest_address,
                 port,
+                packet_length,
                 rtp_packet.get_timestamp(),
             ),
             // If this packet has a payload which type is unknown to us, return proper error.
@@ -61,6 +63,7 @@ pub fn handle_h264(
     ssrc: u32,
     dest_address: Ipv4Addr,
     port: u16,
+    packet_length: u16,
     timestamp: u32,
 ) -> Result<CaptureResult, CaptureError> {
     // Create an RTP's H.264 packet from the raw data given as parameter to this function.
@@ -71,7 +74,7 @@ pub fn handle_h264(
         // Identify this packet's type.
         match h264_packet.get_packet_type() {
             // If this packet's type is a Type-A Fragment Unit, then handle it accordingly.
-            nal::FU_A => handle_fu_a(h264_packet.payload(), ssrc, dest_address, port, timestamp),
+            nal::FU_A => handle_fu_a(h264_packet.payload(), ssrc, dest_address, port, packet_length, timestamp),
             // If this packet's type is an IDR Partition Type Unit, then handle it accordingly.
             nal::IDR_PARTITION => {
                 println!("This is a I-frame");
@@ -79,6 +82,7 @@ pub fn handle_h264(
                     ssrc,
                     dest_address,
                     port,
+                    packet_length,
                     timestamp,
                     MPEGType::I,
                     time::now_utc().to_timespec().sec,
@@ -104,6 +108,7 @@ pub fn handle_fu_a(
     ssrc: u32,
     dest_address: Ipv4Addr,
     port: u16,
+    packet_length: u16,
     timestamp: u32,
 ) -> Result<CaptureResult, CaptureError> {
     // Create an RTP's H.264 FU-A packet from the raw data given as parameter to this function.
@@ -121,6 +126,7 @@ pub fn handle_fu_a(
                             ssrc,
                             dest_address,
                             port,
+                            packet_length,
                             timestamp,
                             time::now_utc().to_timespec().sec,
                         ))
@@ -129,12 +135,14 @@ pub fn handle_fu_a(
                             ssrc,
                             dest_address,
                             port,
+                            packet_length,
                             timestamp,
                             time::now_utc().to_timespec().sec,
                         ))
                     }
                 } else {
-                    handle_slice(fu_a_packet.payload(), ssrc, dest_address, port, timestamp)
+                    handle_slice(fu_a_packet.payload(), ssrc, dest_address, port,
+                                 packet_length,timestamp)
                 }
             }
             // If this packet's unit type is an IDR slice (I-slice), handle it.
@@ -144,6 +152,7 @@ pub fn handle_fu_a(
                         ssrc,
                         dest_address,
                         port,
+                        packet_length,
                         timestamp,
                         MPEGType::I,
                         time::now_utc().to_timespec().sec,
@@ -155,11 +164,13 @@ pub fn handle_fu_a(
             // If this packet's unit type is a SPS, handle it.
             nal::SPS => Ok(SequenceParameterSetResult::launch(
                 dest_address,
+                packet_length,
                 time::now_utc().to_timespec().sec,
             )),
             // If this packet's unit type is a PPS, handle it.
             nal::PPS => Ok(PictureParameterSetResult::launch(
                 dest_address,
+                packet_length,
                 time::now_utc().to_timespec().sec,
             )),
             // If this packet's unit type is unknown to us, return a proper error.
@@ -182,6 +193,7 @@ pub fn handle_slice(
     ssrc: u32,
     dest_address: Ipv4Addr,
     stream_port: u16,
+    packet_length: u16,
     timestamp: u32,
 ) -> Result<CaptureResult, CaptureError> {
     // Create an RTP's H.264 FU-A Slice packet from the raw data given as parameter to this function.
@@ -196,6 +208,7 @@ pub fn handle_slice(
                 ssrc,
                 dest_address,
                 stream_port,
+                packet_length,
                 timestamp,
                 MPEGType::P,
                 time::now_utc().to_timespec().sec,
@@ -205,6 +218,7 @@ pub fn handle_slice(
                 ssrc,
                 dest_address,
                 stream_port,
+                packet_length,
                 timestamp,
                 MPEGType::B,
                 time::now_utc().to_timespec().sec,
@@ -214,6 +228,7 @@ pub fn handle_slice(
                 ssrc,
                 dest_address,
                 stream_port,
+                packet_length,
                 timestamp,
                 MPEGType::I,
                 time::now_utc().to_timespec().sec,
@@ -227,6 +242,7 @@ pub fn handle_slice(
                 ssrc,
                 dest_address,
                 stream_port,
+                packet_length,
                 timestamp,
                 MPEGType::P,
                 time::now_utc().to_timespec().sec,
@@ -236,6 +252,7 @@ pub fn handle_slice(
                 ssrc,
                 dest_address,
                 stream_port,
+                packet_length,
                 timestamp,
                 MPEGType::B,
                 time::now_utc().to_timespec().sec,
@@ -245,6 +262,7 @@ pub fn handle_slice(
                 ssrc,
                 dest_address,
                 stream_port,
+                packet_length,
                 timestamp,
                 MPEGType::I,
                 time::now_utc().to_timespec().sec,

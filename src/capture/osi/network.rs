@@ -31,17 +31,18 @@ pub fn handle_ipv4_packet(packet: &EthernetPacket) -> Result<CaptureResult, Capt
         match ipv4_packet.get_next_level_protocol() {
             // This payload corresponds to an IPv4 packet.
             IpNextHeaderProtocols::Ipv4 => {
-                handle_ipv4_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination())
+                handle_ipv4_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination(), ipv4_packet.get_total_length())
             }
             // This payload corresponds to an IPv6 packet.
             IpNextHeaderProtocols::Ipv6 => {
-                handle_ipv6_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination())
+                handle_ipv6_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination(), ipv4_packet.get_total_length())
             }
             // This payload either is a transport layer packet to be handled or is a malformed packet
             _ => transport::handle(
                 ipv4_packet.get_next_level_protocol(),
                 ipv4_packet.payload(),
                 ipv4_packet.get_destination(),
+                ipv4_packet.get_total_length()
             ),
         }
     } else {
@@ -58,6 +59,7 @@ pub fn handle_ipv4_packet(packet: &EthernetPacket) -> Result<CaptureResult, Capt
 pub fn handle_ipv4_tunneled_packet(
     packet: &[u8],
     _last_dest_address: Ipv4Addr,
+    packet_length: u16,
 ) -> Result<CaptureResult, CaptureError> {
     // Read the received packet's payload as an IPv4 packet.
     let ipv4_packet = Ipv4Packet::new(packet);
@@ -68,17 +70,18 @@ pub fn handle_ipv4_tunneled_packet(
         match ipv4_packet.get_next_level_protocol() {
             // This payload corresponds to an IPv4 packet.
             IpNextHeaderProtocols::Ipv4 => {
-                handle_ipv4_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination())
+                handle_ipv4_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination(), packet_length)
             }
             // This payload corresponds to an IPv6 packet.
             IpNextHeaderProtocols::Ipv6 => {
-                handle_ipv6_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination())
+                handle_ipv6_tunneled_packet(ipv4_packet.payload(), ipv4_packet.get_destination(), packet_length)
             }
             // This payload either is a transport layer packet to be handled or is a malformed packet
             _ => transport::handle(
                 ipv4_packet.get_next_level_protocol(),
                 ipv4_packet.payload(),
                 ipv4_packet.get_destination(),
+                packet_length
             ),
         }
     } else {
@@ -102,17 +105,18 @@ pub fn handle_ipv6_packet(packet: &EthernetPacket) -> Result<CaptureResult, Capt
         match ipv6_packet.get_next_header() {
             // This payload corresponds to an IPv4 packet.
             IpNextHeaderProtocols::Ipv4 => {
-                handle_ipv4_tunneled_packet(ipv6_packet.payload(), Ipv4Addr::new(0, 0, 0, 0))
+                handle_ipv4_tunneled_packet(ipv6_packet.payload(), Ipv4Addr::new(0, 0, 0, 0), ipv6_packet.get_payload_length())
             }
             // This payload corresponds to an IPv6 packet.
             IpNextHeaderProtocols::Ipv6 => {
-                handle_ipv6_tunneled_packet(ipv6_packet.payload(), Ipv4Addr::new(0, 0, 0, 0))
+                handle_ipv6_tunneled_packet(ipv6_packet.payload(), Ipv4Addr::new(0, 0, 0, 0), ipv6_packet.get_payload_length())
             }
             // This payload either is a transport layer packet to be handled or is a malformed packet
             _ => transport::handle(
                 ipv6_packet.get_next_header(),
                 ipv6_packet.payload(),
                 Ipv4Addr::new(0, 0, 0, 0),
+                ipv6_packet.get_payload_length()
             ),
         }
     } else {
@@ -129,6 +133,7 @@ pub fn handle_ipv6_packet(packet: &EthernetPacket) -> Result<CaptureResult, Capt
 pub fn handle_ipv6_tunneled_packet(
     packet: &[u8],
     last_dest_address: Ipv4Addr,
+    packet_length: u16
 ) -> Result<CaptureResult, CaptureError> {
     // Read the received packet's payload as an IPv6 packet.
     let ipv6_packet = Ipv6Packet::new(packet);
@@ -139,17 +144,18 @@ pub fn handle_ipv6_tunneled_packet(
         match ipv6_packet.get_next_header() {
             // This payload corresponds to an IPv4 packet.
             IpNextHeaderProtocols::Ipv4 => {
-                handle_ipv4_tunneled_packet(ipv6_packet.payload(), last_dest_address)
+                handle_ipv4_tunneled_packet(ipv6_packet.payload(), last_dest_address, packet_length)
             }
             // This payload corresponds to an IPv6 packet.
             IpNextHeaderProtocols::Ipv6 => {
-                handle_ipv6_tunneled_packet(ipv6_packet.payload(), last_dest_address)
+                handle_ipv6_tunneled_packet(ipv6_packet.payload(), last_dest_address, packet_length)
             }
             // This payload either is a transport layer packet to be handled or is a malformed packet
             _ => transport::handle(
                 ipv6_packet.get_next_header(),
                 ipv6_packet.payload(),
                 last_dest_address,
+                packet_length
             ),
         }
     } else {

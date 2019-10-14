@@ -21,13 +21,17 @@ impl FrameResult {
         ssrc: u32,
         dest_address: Ipv4Addr,
         stream_port: u16,
+        packet_length: u16,
         frame_timestamp: u32,
         mpeg_type: MPEGType,
         timestamp: i64,
     ) -> CaptureResult {
-        CaptureResult::Frame(FrameResult::new(
-            Frame::new(ssrc, dest_address, stream_port, frame_timestamp, mpeg_type),
-            timestamp,
-        ))
+        CaptureResult::Frame(
+            FrameResult::new(
+                Frame::new(ssrc, dest_address, stream_port, frame_timestamp, mpeg_type),
+                timestamp,
+            ),
+            packet_length,
+        )
     }
 }

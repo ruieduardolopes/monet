@@ -32,6 +32,7 @@ impl StreamResult {
         ssrc: u32,
         destination_address: Ipv4Addr,
         destination_port: u16,
+        packet_length: u16,
         last_known_timestamp: u32,
         timestamp: i64,
     ) -> CaptureResult {
@@ -41,6 +42,6 @@ impl StreamResult {
             destination_port,
             last_known_timestamp,
             timestamp,
-        ))
+        ), packet_length)
     }
 }

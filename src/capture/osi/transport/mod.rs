@@ -21,7 +21,7 @@ use std::net::Ipv4Addr;
 /// # Arguments
 ///
 /// * `packet` - A byte-slice reference to a TCP packet
-fn handle_tcp(packet: &[u8], _dest_address: Ipv4Addr) -> Result<(), CaptureError> {
+fn handle_tcp(packet: &[u8], _dest_address: Ipv4Addr, packet_length: u16) -> Result<(), CaptureError> {
     // Create the TCP packet from the raw data given as parameter to this function.
     let tcp_packet = TcpPacket::new(packet);
 
@@ -43,7 +43,7 @@ fn handle_tcp(packet: &[u8], _dest_address: Ipv4Addr) -> Result<(), CaptureError
 /// # Arguments
 ///
 /// * `packet` - A byte-slice reference to a UDP packet
-fn handle_udp(packet: &[u8], dest_address: Ipv4Addr) -> Result<CaptureResult, CaptureError> {
+fn handle_udp(packet: &[u8], dest_address: Ipv4Addr, packet_length: u16) -> Result<CaptureResult, CaptureError> {
     // Create the UDP packet from the raw data given as parameter to this function.
     let udp_packet = UdpPacket::new(packet);
 
@@ -55,6 +55,7 @@ fn handle_udp(packet: &[u8], dest_address: Ipv4Addr) -> Result<CaptureResult, Ca
             udp_packet.payload(),
             dest_address,
             udp_packet.get_destination(),
+            packet_length
         );
         if result.is_ok() {
             return result;
@@ -63,6 +64,7 @@ fn handle_udp(packet: &[u8], dest_address: Ipv4Addr) -> Result<CaptureResult, Ca
             udp_packet.payload(),
             dest_address,
             udp_packet.get_destination(),
+            packet_length
         )
     } else {
         // If an error occurs, then we consider that this UDP packet was malformed.
@@ -81,16 +83,17 @@ pub fn handle(
     protocol: IpNextHeaderProtocol,
     packet: &[u8],
     dest_address: Ipv4Addr,
+    packet_length: u16
 ) -> Result<CaptureResult, CaptureError> {
     // Verify the inner transport protocol to handle it accordingly.
     match protocol {
         // If this packet is a TCP, handle it as TCP.
         IpNextHeaderProtocols::Tcp => {
-            handle_tcp(packet, dest_address).unwrap();
-            Ok(OtherResult::launch(0))
+            handle_tcp(packet, dest_address, packet_length).unwrap();
+            Ok(OtherResult::launch(packet_length, 0))
         }
         // If this packet is a UDP, handle it as UDP.
-        IpNextHeaderProtocols::Udp => match handle_udp(packet, dest_address) {
+        IpNextHeaderProtocols::Udp => match handle_udp(packet, dest_address, packet_length) {
             Ok(packet) => Ok(packet),
             Err(_error) => Err(_error),
         },

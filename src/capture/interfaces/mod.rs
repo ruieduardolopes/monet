@@ -331,7 +331,7 @@ pub fn run_capture(
             match execute_once((&mut tx, &mut rx)) {
                 Ok(result) => {
                     match result.0 {
-                        CaptureResult::Other(timestamp) => continue,
+                        CaptureResult::Other(timestamp, packet_length) => continue,
                         _ => (),
                     };
                     worker_on_queue.push(result.0);

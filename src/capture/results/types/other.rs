@@ -10,7 +10,7 @@ impl OtherResult {
         OtherResult { timestamp }
     }
 
-    pub fn launch(timestamp: i64) -> CaptureResult {
-        CaptureResult::Other(OtherResult::new(timestamp))
+    pub fn launch(packet_length: u16, timestamp: i64) -> CaptureResult {
+        CaptureResult::Other(OtherResult::new(timestamp), packet_length)
     }
 }
