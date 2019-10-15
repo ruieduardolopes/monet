@@ -36,12 +36,15 @@ impl StreamResult {
         last_known_timestamp: u32,
         timestamp: i64,
     ) -> CaptureResult {
-        CaptureResult::Stream(StreamResult::new(
-            ssrc,
-            destination_address,
-            destination_port,
-            last_known_timestamp,
-            timestamp,
-        ), packet_length)
+        CaptureResult::Stream(
+            StreamResult::new(
+                ssrc,
+                destination_address,
+                destination_port,
+                last_known_timestamp,
+                timestamp,
+            ),
+            packet_length,
+        )
     }
 }

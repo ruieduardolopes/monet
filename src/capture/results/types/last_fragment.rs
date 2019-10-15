@@ -22,12 +22,17 @@ impl LastFragmentResult {
         dest_address: Ipv4Addr,
         stream_port: u16,
         packet_length: u16,
+        sequence_number: u16,
         fragment_timestamp: u32,
         timestamp: i64,
     ) -> CaptureResult {
-        CaptureResult::LastFragment(LastFragmentResult::new(
-            Fragment::new(ssrc, dest_address, stream_port, fragment_timestamp),
-            timestamp,
-        ), packet_length)
+        CaptureResult::LastFragment(
+            LastFragmentResult::new(
+                Fragment::new(ssrc, dest_address, stream_port, fragment_timestamp),
+                timestamp,
+            ),
+            packet_length,
+            sequence_number,
+        )
     }
 }
