@@ -59,7 +59,8 @@ fn main() {
                     Some(filter_string) => filter = Regex::new(filter_string).unwrap(),
                     None => filter = Regex::new(".*").unwrap(),
                 }
-                match subcommands::run::init(ingress, egress, filter) {
+                let export = cliopts.subcommand_matches(subcommand_string).unwrap().is_present("export-objects");
+                match subcommands::run::init(ingress, egress, filter, export) {
                     Ok(_) => {}
                     Err(_) => {}
                 }

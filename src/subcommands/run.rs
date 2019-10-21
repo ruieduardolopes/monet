@@ -17,7 +17,7 @@ use crate::capture::results::CaptureResult;
 use crate::structs::node::status::NodeStatus;
 use crate::structs::node::Node;
 
-pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error> {
+pub fn init(ingress: String, egress: String, filter: Regex, export: bool) -> Result<(), Error> {
     // Start both ingress and egress captures.
     thread::scope(|scope| {
         let home = match env::var_os("HOME") {
@@ -85,25 +85,26 @@ pub fn init(ingress: String, egress: String, filter: Regex) -> Result<(), Error>
                     }
                 }
             }
-
-            let mut file = OpenOptions::new()
-                .create_new(true)
-                .write(true)
-                .open(if *is_ingress {
-                    println!(
-                        "\nTrying to create {}",
+            if export {
+                let mut file = OpenOptions::new()
+                    .create_new(true)
+                    .write(true)
+                    .open(if *is_ingress {
+                        println!(
+                            "\nTrying to create {}",
+                            format!("{}/.monet/ingress-{}.monet", home.display(), interface)
+                        );
                         format!("{}/.monet/ingress-{}.monet", home.display(), interface)
-                    );
-                    format!("{}/.monet/ingress-{}.monet", home.display(), interface)
-                } else {
-                    println!(
-                        "\nTrying to create {}",
+                    } else {
+                        println!(
+                            "\nTrying to create {}",
+                            format!("{}/.monet/egress-{}.monet", home.display(), interface)
+                        );
                         format!("{}/.monet/egress-{}.monet", home.display(), interface)
-                    );
-                    format!("{}/.monet/egress-{}.monet", home.display(), interface)
-                })
-                .unwrap();
-            bincode::serialize_into(&mut file, &capture).unwrap();
+                    })
+                    .unwrap();
+                bincode::serialize_into(&mut file, &capture).unwrap();
+            }
         });
         std::process::exit(0);
     });

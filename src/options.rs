@@ -2,7 +2,7 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 
 pub fn get_options_from_cli() -> ArgMatches<'static> {
     App::new("Monet: Monitor a Network")
-        .version("0.1.5-rc8")
+        .version("0.1.5-rc9")
         .author("André Nascimento and Rui Lopes")
         .about("Tool to get some insights on a network or interfaces")
         .subcommand(
@@ -24,6 +24,14 @@ pub fn get_options_from_cli() -> ArgMatches<'static> {
                         .required(false)
                         .default_value("")
                         .help("Set of egress interfaces, between quotes: i.e. \"enp0s1,wlan0\"")
+                )
+                .arg(
+                    Arg::with_name("export-objects")
+                        .takes_value(false)
+                        .long("export")
+                        .short("O")
+                        .required(false)
+                        .help("Flag if you want to export captures as monet's files.")
                 )
                 .arg(
                     Arg::with_name("filter")
